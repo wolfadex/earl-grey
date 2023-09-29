@@ -608,7 +608,7 @@ ${variant}`;
   var VERSION = "1.2.0-beta.3";
   var TARGET_NAME = "My target name";
   var INITIAL_ELM_COMPILED_TIMESTAMP = Number(
-    "1696016877125"
+    "1696027400944"
   );
   var ORIGINAL_COMPILATION_MODE = "standard";
   var ORIGINAL_BROWSER_UI_POSITION = "BottomLeft";
@@ -8484,7 +8484,14 @@ var $author$project$Sprig$mapMsg = F2(
 var $author$project$Base$HeaderMsg = function (a) {
 	return {$: 'HeaderMsg', a: a};
 };
+var $author$project$Base$HomeMsg = function (a) {
+	return {$: 'HomeMsg', a: a};
+};
 var $author$project$Base$applyHeaderEffects = F2(
+	function (_v0, sprig) {
+		return sprig;
+	});
+var $author$project$Base$applyHomeEffects = F2(
 	function (_v0, sprig) {
 		return sprig;
 	});
@@ -8492,6 +8499,12 @@ var $author$project$Header$init = function (_v0) {
 	return $author$project$Sprig$save(
 		{});
 };
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $author$project$Header$subscriptions = F2(
+	function (_v0, _v1) {
+		return $elm$core$Platform$Sub$none;
+	});
 var $author$project$Header$Navigate = {$: 'Navigate'};
 var $author$project$Sprig$withEffect = F2(
 	function (effect, _v0) {
@@ -9169,49 +9182,586 @@ var $author$project$Header$view = F2(
 						]))
 				]));
 	});
-var $author$project$Header$branch = {init: $author$project$Header$init, update: $author$project$Header$update, urlChanged: $author$project$Header$urlChanged, view: $author$project$Header$view};
-var $author$project$Base$init = function (context) {
-	return A2(
-		$author$project$Sprig$applyEffects,
-		$author$project$Base$applyHeaderEffects,
-		A2(
-			$author$project$Sprig$mapModel,
-			function (header) {
-				return {header: header, user: $elm$core$Maybe$Nothing};
-			},
-			A2(
-				$author$project$Sprig$mapMsg,
-				$author$project$Base$HeaderMsg,
-				$author$project$Header$branch.init(context))));
+var $author$project$Header$branch = {init: $author$project$Header$init, subscriptions: $author$project$Header$subscriptions, update: $author$project$Header$update, urlChanged: $author$project$Header$urlChanged, view: $author$project$Header$view};
+var $author$project$Home$init = function (context) {
+	return $author$project$Sprig$save(
+		{});
 };
+var $author$project$Home$subscriptions = F2(
+	function (_v0, _v1) {
+		return $elm$core$Platform$Sub$none;
+	});
+var $author$project$Home$update = F3(
+	function (_v0, _v1, model) {
+		return $author$project$Sprig$save(model);
+	});
+var $author$project$Home$urlChanged = F2(
+	function (_v0, model) {
+		return $author$project$Sprig$save(model);
+	});
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $author$project$Home$viewBanner = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('banner')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('container')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h1,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('logo-font')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('conduit')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('A place to share your knowledge.')
+						]))
+				]))
+		]));
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$Home$viewArticleMeta = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('article-meta')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href('/profile/eric-simons')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$img,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$src('http://i.imgur.com/Qr71crq.jpg')
+						]),
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('info')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href('/profile/eric-simons'),
+							$elm$html$Html$Attributes$class('author')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Eric Simons')
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('date')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('January 20th')
+						]))
+				])),
+			A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('btn btn-outline-primary btn-sm pull-xs-right')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$i,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('ion-heart')
+						]),
+					_List_Nil),
+					$elm$html$Html$text(' 29')
+				]))
+		]));
+var $author$project$Home$viewArticlePreviewLink = A2(
+	$elm$html$Html$a,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$href('/article/how-to-build-webapps-that-scale'),
+			$elm$html$Html$Attributes$class('preview-link')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$h1,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('How to build webapps that scale')
+				])),
+			A2(
+			$elm$html$Html$p,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('This is the description for the post.')
+				])),
+			A2(
+			$elm$html$Html$span,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Read more...')
+				])),
+			A2(
+			$elm$html$Html$ul,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('tag-list')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$li,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-default tag-pill tag-outline')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('realworld')
+						])),
+					A2(
+					$elm$html$Html$li,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-default tag-pill tag-outline')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('implementations')
+						]))
+				]))
+		]));
+var $author$project$Home$viewArticlePreview = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('article-preview')
+		]),
+	_List_fromArray(
+		[$author$project$Home$viewArticleMeta, $author$project$Home$viewArticlePreviewLink]));
+var $author$project$Home$viewFeedToggle = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('feed-toggle')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$ul,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('nav nav-pills outline-active')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$li,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('nav-item')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('nav-link')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Your Feed')
+								]))
+						])),
+					A2(
+					$elm$html$Html$li,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('nav-item')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('nav-link active')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Global Feed')
+								]))
+						]))
+				]))
+		]));
+var $author$project$Home$viewPagination = A2(
+	$elm$html$Html$ul,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('pagination')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$li,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('page-item active')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('page-link'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('1')
+						]))
+				])),
+			A2(
+			$elm$html$Html$li,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('page-item')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('page-link'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('2')
+						]))
+				]))
+		]));
+var $author$project$Home$viewSidebar = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('sidebar')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$p,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Popular Tags')
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('tag-list')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('programming')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('javascript')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('emberjs')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('angularjs')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('react')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('mean')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('node')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag-pill tag-default'),
+							$elm$html$Html$Attributes$href('')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('rails')
+						]))
+				]))
+		]));
+var $author$project$Home$viewPageContainer = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('container page')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('row')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('col-md-9')
+						]),
+					_List_fromArray(
+						[$author$project$Home$viewFeedToggle, $author$project$Home$viewArticlePreview, $author$project$Home$viewArticlePreview, $author$project$Home$viewPagination])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('col-md-3')
+						]),
+					_List_fromArray(
+						[$author$project$Home$viewSidebar]))
+				]))
+		]));
+var $author$project$Home$view = F2(
+	function (_v0, _v1) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('home-page')
+				]),
+			_List_fromArray(
+				[$author$project$Home$viewBanner, $author$project$Home$viewPageContainer]));
+	});
+var $author$project$Home$branch = {init: $author$project$Home$init, subscriptions: $author$project$Home$subscriptions, update: $author$project$Home$update, urlChanged: $author$project$Home$urlChanged, view: $author$project$Home$view};
+var $author$project$Sprig$Effects = function (a) {
+	return {$: 'Effects', a: a};
+};
+var $author$project$Sprig$extractModel = function (_v0) {
+	var update = _v0.a;
+	return _Utils_Tuple2(
+		update.model,
+		$author$project$Sprig$Effects(
+			{cmds: update.cmds, effects: _List_Nil}));
+};
+var $author$project$Sprig$withChildEffects = F4(
+	function (mapMsgFn, applyEffectFn, _v0, _v1) {
+		var effs = _v0.a;
+		var update = _v1.a;
+		return A3(
+			$elm$core$List$foldl,
+			applyEffectFn,
+			$author$project$Sprig$Sprig(
+				{
+					cmds: _Utils_ap(
+						update.cmds,
+						A2(
+							$elm$core$List$map,
+							$elm$core$Platform$Cmd$map(mapMsgFn),
+							effs.cmds)),
+					effects: update.effects,
+					model: update.model
+				}),
+			effs.effects);
+	});
+var $author$project$Base$init = function (context) {
+	var _v0 = $author$project$Sprig$extractModel(
+		$author$project$Home$branch.init(context));
+	var home = _v0.a;
+	var homeEffects = _v0.b;
+	var _v1 = $author$project$Sprig$extractModel(
+		$author$project$Header$branch.init(context));
+	var header = _v1.a;
+	var headerEffects = _v1.b;
+	return A4(
+		$author$project$Sprig$withChildEffects,
+		$author$project$Base$HomeMsg,
+		$author$project$Base$applyHomeEffects,
+		homeEffects,
+		A4(
+			$author$project$Sprig$withChildEffects,
+			$author$project$Base$HeaderMsg,
+			$author$project$Base$applyHeaderEffects,
+			headerEffects,
+			$author$project$Sprig$save(
+				{header: header, home: home})));
+};
+var $elm$core$Platform$Sub$map = _Platform_map;
+var $author$project$Base$subscriptions = F2(
+	function (context, model) {
+		return $elm$core$Platform$Sub$batch(
+			_List_fromArray(
+				[
+					A2(
+					$elm$core$Platform$Sub$map,
+					$author$project$Base$HeaderMsg,
+					A2($author$project$Header$branch.subscriptions, context, model.header)),
+					A2(
+					$elm$core$Platform$Sub$map,
+					$author$project$Base$HomeMsg,
+					A2($author$project$Home$branch.subscriptions, context, model.home))
+				]));
+	});
 var $author$project$Base$Navigate = function (a) {
 	return {$: 'Navigate', a: a};
 };
 var $author$project$Base$update = F3(
 	function (context, msg, model) {
-		if (msg.$ === 'Login') {
-			return A2(
-				$author$project$Sprig$withEffect,
-				$author$project$Base$Navigate(
-					_List_fromArray(
-						['login'])),
-				$author$project$Sprig$save(model));
-		} else {
-			var headerMsg = msg.a;
-			return A2(
-				$author$project$Sprig$applyEffects,
-				$author$project$Base$applyHeaderEffects,
-				A2(
-					$author$project$Sprig$mapModel,
-					function (header) {
-						return _Utils_update(
-							model,
-							{header: header});
-					},
+		switch (msg.$) {
+			case 'Login':
+				return A2(
+					$author$project$Sprig$withEffect,
+					$author$project$Base$Navigate(
+						_List_fromArray(
+							['login'])),
+					$author$project$Sprig$save(model));
+			case 'HeaderMsg':
+				var headerMsg = msg.a;
+				return A2(
+					$author$project$Sprig$applyEffects,
+					$author$project$Base$applyHeaderEffects,
 					A2(
-						$author$project$Sprig$mapMsg,
-						$author$project$Base$HeaderMsg,
-						A3($author$project$Header$branch.update, context, headerMsg, model.header))));
+						$author$project$Sprig$mapModel,
+						function (header) {
+							return _Utils_update(
+								model,
+								{header: header});
+						},
+						A2(
+							$author$project$Sprig$mapMsg,
+							$author$project$Base$HeaderMsg,
+							A3($author$project$Header$branch.update, context, headerMsg, model.header))));
+			default:
+				var homeMsg = msg.a;
+				return A2(
+					$author$project$Sprig$applyEffects,
+					$author$project$Base$applyHomeEffects,
+					A2(
+						$author$project$Sprig$mapModel,
+						function (home) {
+							return _Utils_update(
+								model,
+								{home: home});
+						},
+						A2(
+							$author$project$Sprig$mapMsg,
+							$author$project$Base$HomeMsg,
+							A3($author$project$Home$branch.update, context, homeMsg, model.home))));
 		}
 	});
 var $author$project$Base$urlChanged = F2(
@@ -9233,6 +9783,54 @@ var $author$project$Base$urlChanged = F2(
 	});
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
+var $elm$html$Html$footer = _VirtualDom_node('footer');
+var $author$project$Base$viewFooter = A2(
+	$elm$html$Html$footer,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('container')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href('/'),
+							$elm$html$Html$Attributes$class('logo-font')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('conduit')
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('attribution')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('An interactive learning project from '),
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$href('https :// thinkster.io')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Thinkster')
+								])),
+							$elm$html$Html$text('. Code design licensed under MIT.')
+						]))
+				]))
+		]));
 var $author$project$Base$view = F2(
 	function (context, model) {
 		return A2(
@@ -9243,10 +9841,15 @@ var $author$project$Base$view = F2(
 					A2(
 					$elm$html$Html$map,
 					$author$project$Base$HeaderMsg,
-					A2($author$project$Header$branch.view, context, model.header))
+					A2($author$project$Header$branch.view, context, model.header)),
+					A2(
+					$elm$html$Html$map,
+					$author$project$Base$HomeMsg,
+					A2($author$project$Home$branch.view, context, model.home)),
+					$author$project$Base$viewFooter
 				]));
 	});
-var $author$project$Base$branch = {init: $author$project$Base$init, update: $author$project$Base$update, urlChanged: $author$project$Base$urlChanged, view: $author$project$Base$view};
+var $author$project$Base$branch = {init: $author$project$Base$init, subscriptions: $author$project$Base$subscriptions, update: $author$project$Base$update, urlChanged: $author$project$Base$urlChanged, view: $author$project$Base$view};
 var $elm$core$Basics$composeR = F3(
 	function (f, g, x) {
 		return g(
@@ -9795,6 +10398,7 @@ var $author$project$Sprig$tree = F2(
 						branch.init(context),
 						context);
 				}),
+			subscriptions: branch.subscriptions,
 			update: branch.update,
 			urlChanged: branch.urlChanged,
 			view: branch.view
@@ -9823,10 +10427,11 @@ var $author$project$Main$init = F3(
 					},
 					A2($author$project$Sprig$mapMsg, $author$project$Main$TreeMsg, initialSprig))));
 	});
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Main$subscriptions = function (_v0) {
-	return $elm$core$Platform$Sub$none;
+var $author$project$Main$subscriptions = function (model) {
+	return A2(
+		$elm$core$Platform$Sub$map,
+		$author$project$Main$TreeMsg,
+		A2($author$project$Main$tree.subscriptions, model.context, model.root));
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$url$Url$addPort = F2(

@@ -68,8 +68,9 @@ type alias Effect =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    tree.subscriptions model.context model.root
+        |> Sub.map TreeMsg
 
 
 type Msg

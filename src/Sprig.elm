@@ -5,7 +5,7 @@ module Sprig exposing
     , mapModel, mapMsg
     , andThen
     , applyEffects
-    , Branch, Context, Tree, absolutePath, flags, relativePath, tree, urlChanged
+    , Branch, Context, Tree, absolutePath, extractModel, flags, relativePath, tree, urlChanged, withChildEffects
     )
 
 {-|
@@ -29,6 +29,7 @@ import Url exposing (Url)
 
 type alias Tree encodedFlags flags model msg effect =
     { init : encodedFlags -> Url -> ( Sprig model msg effect, Context flags )
+    , subscriptions : Context flags -> model -> Sub msg
     , update : Context flags -> msg -> model -> Sprig model msg effect
     , urlChanged : Context flags -> model -> Sprig model msg effect
     , view : Context flags -> model -> Html msg
@@ -51,6 +52,7 @@ tree decodeFlags branch =
                         }
             in
             ( branch.init context, context )
+    , subscriptions = branch.subscriptions
     , urlChanged = branch.urlChanged
     , update = branch.update
     , view = branch.view
@@ -59,6 +61,7 @@ tree decodeFlags branch =
 
 type alias Branch flags model msg effect =
     { init : Context flags -> Sprig model msg effect
+    , subscriptions : Context flags -> model -> Sub msg
     , update : Context flags -> msg -> model -> Sprig model msg effect
     , urlChanged : Context flags -> model -> Sprig model msg effect
     , view : Context flags -> model -> Html msg
@@ -125,7 +128,11 @@ consumePath pathToTake (Context context) =
 
 
 type Sprig model msg effect
-    = Sprig { model : model, cmds : List (Cmd msg), effects : List effect }
+    = Sprig
+        { model : model
+        , cmds : List (Cmd msg)
+        , effects : List effect
+        }
 
 
 save : model -> Sprig model msg effect
@@ -146,6 +153,23 @@ withMsg msg (Sprig update) =
 withEffect : effect -> Sprig model msg effect -> Sprig model msg effect
 withEffect effect (Sprig update) =
     Sprig { update | effects = effect :: update.effects }
+
+
+withChildEffects :
+    (childMsg -> parentMsg)
+    -> (childEffect -> Sprig model parentMsg parentEffect -> Sprig model parentMsg parentEffect)
+    -> Effects childMsg childEffect
+    -> Sprig model parentMsg parentEffect
+    -> Sprig model parentMsg parentEffect
+withChildEffects mapMsgFn applyEffectFn (Effects effs) (Sprig update) =
+    List.foldl applyEffectFn
+        (Sprig
+            { model = update.model
+            , cmds = update.cmds ++ List.map (Cmd.map mapMsgFn) effs.cmds
+            , effects = update.effects
+            }
+        )
+        effs.effects
 
 
 msgToCmd : msg -> Cmd msg
@@ -199,6 +223,23 @@ applyEffects fn (Sprig update) =
             }
         )
         update.effects
+
+
+extractModel : Sprig model msg effect -> ( model, Effects msg effect )
+extractModel (Sprig update) =
+    ( update.model
+    , Effects
+        { cmds = update.cmds
+        , effects = []
+        }
+    )
+
+
+type Effects msg effect
+    = Effects
+        { cmds : List (Cmd msg)
+        , effects : List effect
+        }
 
 
 complete : Sprig model msg effect -> ( model, Cmd msg )

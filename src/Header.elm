@@ -11,6 +11,7 @@ import User exposing (User)
 branch : Sprig.Branch (Maybe User) Model Msg Effect
 branch =
     { init = init
+    , subscriptions = subscriptions
     , update = update
     , urlChanged = urlChanged
     , view = view
@@ -25,6 +26,11 @@ init _ =
 
 type alias Model =
     {}
+
+
+subscriptions : Sprig.Context (Maybe User) -> Model -> Sub Msg
+subscriptions _ _ =
+    Sub.none
 
 
 type Msg
