@@ -1,4 +1,4 @@
-module Login exposing
+module Register exposing
     ( Effect
     , InternalModel
     , Model
@@ -16,7 +16,7 @@ import User exposing (User)
 branch : Sprig.Route (Maybe User) InternalModel Msg Effect
 branch =
     Sprig.branch
-        { path = [ "login" ]
+        { path = [ "register" ]
         }
         { init = init
         , subscriptions = subscriptions
@@ -31,7 +31,8 @@ type alias Model =
 
 
 type alias InternalModel =
-    { email : String
+    { username : String
+    , email : String
     , password : String
     }
 
@@ -42,7 +43,10 @@ type alias Effect =
 
 init : Sprig.Context (Maybe User) -> Sprig InternalModel Msg Effect
 init context =
-    { email = "", password = "" }
+    { username = ""
+    , email = ""
+    , password = ""
+    }
         |> Sprig.save
 
 
@@ -52,16 +56,21 @@ subscriptions _ _ =
 
 
 type Msg
-    = EmailChanged String
-    | Login
+    = UsernameChanged String
+    | EmailChanged String
+    | PasswordChanged String
       -- | LoginSuccess User
       -- | LoginFailure String
-    | PasswordChanged String
+    | Register
 
 
 update : Sprig.Context (Maybe User) -> Msg -> InternalModel -> Sprig InternalModel Msg Effect
 update context msg model =
     case msg of
+        UsernameChanged username ->
+            { model | username = username }
+                |> Sprig.save
+
         EmailChanged email ->
             { model | email = email }
                 |> Sprig.save
@@ -70,7 +79,7 @@ update context msg model =
             { model | password = password }
                 |> Sprig.save
 
-        Login ->
+        Register ->
             model
                 |> Sprig.save
 
@@ -87,15 +96,25 @@ view context model =
         [ Html.div [ Html.Attributes.class "container page" ]
             [ Html.div [ Html.Attributes.class "row" ]
                 [ Html.div [ Html.Attributes.class "col-md-6 offset-md-3 col-xs-12" ]
-                    [ Html.h1 [ Html.Attributes.class "text-xs-center" ] [ Html.text "Sign in" ]
+                    [ Html.h1 [ Html.Attributes.class "text-xs-center" ] [ Html.text "Sign up" ]
                     , Html.p [ Html.Attributes.class "text-xs-center" ]
-                        [ Html.a [ Html.Attributes.href "/register" ] [ Html.text "Need an account?" ]
+                        [ Html.a [ Html.Attributes.href "/login" ] [ Html.text "Have an account?" ]
                         ]
 
                     -- , Html.ul [ Html.Attributes.class "error-messages" ]
                     --     [ Html.li [] [ Html.text "That email is already taken" ] ]
-                    , Html.form [ Html.Events.onSubmit Login ]
+                    , Html.form [ Html.Events.onSubmit Register ]
                         [ Html.fieldset [ Html.Attributes.class "form-group" ]
+                            [ Html.input
+                                [ Html.Attributes.class "form-control form-control-lg"
+                                , Html.Attributes.type_ "text"
+                                , Html.Attributes.placeholder "Username"
+                                , Html.Events.onInput UsernameChanged
+                                , Html.Attributes.value model.username
+                                ]
+                                []
+                            ]
+                        , Html.fieldset [ Html.Attributes.class "form-group" ]
                             [ Html.input
                                 [ Html.Attributes.class "form-control form-control-lg"
                                 , Html.Attributes.type_ "text"
@@ -119,7 +138,7 @@ view context model =
                             [ Html.Attributes.class "btn btn-lg btn-primary pull-xs-right"
                             , Html.Attributes.type_ "submit"
                             ]
-                            [ Html.text "Sign in" ]
+                            [ Html.text "Sign up" ]
                         ]
                     ]
                 ]

@@ -608,7 +608,7 @@ ${variant}`;
   var VERSION = "1.2.0-beta.3";
   var TARGET_NAME = "My target name";
   var INITIAL_ELM_COMPILED_TIMESTAMP = Number(
-    "1696040336378"
+    "1696041654624"
   );
   var ORIGINAL_COMPILATION_MODE = "debug";
   var ORIGINAL_BROWSER_UI_POSITION = "BottomLeft";
@@ -13895,6 +13895,9 @@ var $author$project$Base$HomeMsg = function (a) {
 var $author$project$Base$LoginMsg = function (a) {
 	return {$: 'LoginMsg', a: a};
 };
+var $author$project$Base$RegisterMsg = function (a) {
+	return {$: 'RegisterMsg', a: a};
+};
 var $author$project$Base$applyHeaderEffects = F2(
 	function (_v0, sprig) {
 		return sprig;
@@ -13904,6 +13907,10 @@ var $author$project$Base$applyHomeEffects = F2(
 		return sprig;
 	});
 var $author$project$Base$applyLoginEffects = F2(
+	function (_v0, sprig) {
+		return sprig;
+	});
+var $author$project$Base$applyRegisterEffects = F2(
 	function (_v0, sprig) {
 		return sprig;
 	});
@@ -15048,7 +15055,6 @@ var $author$project$Login$view = F2(
 												]),
 											_List_fromArray(
 												[
-													$elm$html$Html$text('Need an account?'),
 													A2(
 													$elm$html$Html$a,
 													_List_fromArray(
@@ -15058,22 +15064,6 @@ var $author$project$Login$view = F2(
 													_List_fromArray(
 														[
 															$elm$html$Html$text('Need an account?')
-														]))
-												])),
-											A2(
-											$elm$html$Html$ul,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('error-messages')
-												]),
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$li,
-													_List_Nil,
-													_List_fromArray(
-														[
-															$elm$html$Html$text('That email is already taken')
 														]))
 												])),
 											A2(
@@ -15148,6 +15138,208 @@ var $author$project$Login$branch = A2(
 			['login'])
 	},
 	{init: $author$project$Login$init, subscriptions: $author$project$Login$subscriptions, update: $author$project$Login$update, urlChanged: $author$project$Login$urlChanged, view: $author$project$Login$view});
+var $author$project$Register$init = function (context) {
+	return $author$project$Sprig$save(
+		{email: '', password: '', username: ''});
+};
+var $author$project$Register$subscriptions = F2(
+	function (_v0, _v1) {
+		return $elm$core$Platform$Sub$none;
+	});
+var $author$project$Register$update = F3(
+	function (context, msg, model) {
+		switch (msg.$) {
+			case 'UsernameChanged':
+				var username = msg.a;
+				return $author$project$Sprig$save(
+					_Utils_update(
+						model,
+						{username: username}));
+			case 'EmailChanged':
+				var email = msg.a;
+				return $author$project$Sprig$save(
+					_Utils_update(
+						model,
+						{email: email}));
+			case 'PasswordChanged':
+				var password = msg.a;
+				return $author$project$Sprig$save(
+					_Utils_update(
+						model,
+						{password: password}));
+			default:
+				return $author$project$Sprig$save(model);
+		}
+	});
+var $author$project$Register$urlChanged = F2(
+	function (_v0, model) {
+		return $author$project$Sprig$save(model);
+	});
+var $author$project$Register$EmailChanged = function (a) {
+	return {$: 'EmailChanged', a: a};
+};
+var $author$project$Register$PasswordChanged = function (a) {
+	return {$: 'PasswordChanged', a: a};
+};
+var $author$project$Register$Register = {$: 'Register'};
+var $author$project$Register$UsernameChanged = function (a) {
+	return {$: 'UsernameChanged', a: a};
+};
+var $author$project$Register$view = F2(
+	function (context, model) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('auth-page')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('container page')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('row')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('col-md-6 offset-md-3 col-xs-12')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$h1,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('text-xs-center')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Sign up')
+												])),
+											A2(
+											$elm$html$Html$p,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('text-xs-center')
+												]),
+											_List_fromArray(
+												[
+													A2(
+													$elm$html$Html$a,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$href('/login')
+														]),
+													_List_fromArray(
+														[
+															$elm$html$Html$text('Have an account?')
+														]))
+												])),
+											A2(
+											$elm$html$Html$form,
+											_List_fromArray(
+												[
+													$elm$html$Html$Events$onSubmit($author$project$Register$Register)
+												]),
+											_List_fromArray(
+												[
+													A2(
+													$elm$html$Html$fieldset,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('form-group')
+														]),
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$input,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$class('form-control form-control-lg'),
+																	$elm$html$Html$Attributes$type_('text'),
+																	$elm$html$Html$Attributes$placeholder('Username'),
+																	$elm$html$Html$Events$onInput($author$project$Register$UsernameChanged),
+																	$elm$html$Html$Attributes$value(model.username)
+																]),
+															_List_Nil)
+														])),
+													A2(
+													$elm$html$Html$fieldset,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('form-group')
+														]),
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$input,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$class('form-control form-control-lg'),
+																	$elm$html$Html$Attributes$type_('text'),
+																	$elm$html$Html$Attributes$placeholder('Email'),
+																	$elm$html$Html$Events$onInput($author$project$Register$EmailChanged),
+																	$elm$html$Html$Attributes$value(model.email)
+																]),
+															_List_Nil)
+														])),
+													A2(
+													$elm$html$Html$fieldset,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('form-group')
+														]),
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$input,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$class('form-control form-control-lg'),
+																	$elm$html$Html$Attributes$type_('password'),
+																	$elm$html$Html$Attributes$placeholder('Password'),
+																	$elm$html$Html$Events$onInput($author$project$Register$PasswordChanged),
+																	$elm$html$Html$Attributes$value(model.password)
+																]),
+															_List_Nil)
+														])),
+													A2(
+													$elm$html$Html$button,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('btn btn-lg btn-primary pull-xs-right'),
+															$elm$html$Html$Attributes$type_('submit')
+														]),
+													_List_fromArray(
+														[
+															$elm$html$Html$text('Sign up')
+														]))
+												]))
+										]))
+								]))
+						]))
+				]));
+	});
+var $author$project$Register$branch = A2(
+	$author$project$Sprig$branch,
+	{
+		path: _List_fromArray(
+			['register'])
+	},
+	{init: $author$project$Register$init, subscriptions: $author$project$Register$subscriptions, update: $author$project$Register$update, urlChanged: $author$project$Register$urlChanged, view: $author$project$Register$view});
 var $author$project$Sprig$Effects = function (a) {
 	return {$: 'Effects', a: a};
 };
@@ -15180,34 +15372,43 @@ var $author$project$Sprig$withChildEffects = F4(
 	});
 var $author$project$Base$init = function (context) {
 	var _v0 = $author$project$Sprig$extractModel(
-		$author$project$Login$branch.init(context));
-	var login = _v0.a;
-	var loginEffects = _v0.b;
+		$author$project$Register$branch.init(context));
+	var register = _v0.a;
+	var registerEffects = _v0.b;
 	var _v1 = $author$project$Sprig$extractModel(
-		$author$project$Home$branch.init(context));
-	var home = _v1.a;
-	var homeEffects = _v1.b;
+		$author$project$Login$branch.init(context));
+	var login = _v1.a;
+	var loginEffects = _v1.b;
 	var _v2 = $author$project$Sprig$extractModel(
+		$author$project$Home$branch.init(context));
+	var home = _v2.a;
+	var homeEffects = _v2.b;
+	var _v3 = $author$project$Sprig$extractModel(
 		$author$project$Header$branch.init(context));
-	var header = _v2.a;
-	var headerEffects = _v2.b;
+	var header = _v3.a;
+	var headerEffects = _v3.b;
 	return A4(
 		$author$project$Sprig$withChildEffects,
-		$author$project$Base$LoginMsg,
-		$author$project$Base$applyLoginEffects,
-		loginEffects,
+		$author$project$Base$RegisterMsg,
+		$author$project$Base$applyRegisterEffects,
+		registerEffects,
 		A4(
 			$author$project$Sprig$withChildEffects,
-			$author$project$Base$HomeMsg,
-			$author$project$Base$applyHomeEffects,
-			homeEffects,
+			$author$project$Base$LoginMsg,
+			$author$project$Base$applyLoginEffects,
+			loginEffects,
 			A4(
 				$author$project$Sprig$withChildEffects,
-				$author$project$Base$HeaderMsg,
-				$author$project$Base$applyHeaderEffects,
-				headerEffects,
-				$author$project$Sprig$save(
-					{header: header, home: home, login: login}))));
+				$author$project$Base$HomeMsg,
+				$author$project$Base$applyHomeEffects,
+				homeEffects,
+				A4(
+					$author$project$Sprig$withChildEffects,
+					$author$project$Base$HeaderMsg,
+					$author$project$Base$applyHeaderEffects,
+					headerEffects,
+					$author$project$Sprig$save(
+						{header: header, home: home, login: login, register: register})))));
 };
 var $author$project$Base$subscriptions = F2(
 	function (context, model) {
@@ -15273,7 +15474,7 @@ var $author$project$Base$update = F3(
 							$author$project$Sprig$mapMsg,
 							$author$project$Base$HomeMsg,
 							A3($author$project$Home$branch.update, context, homeMsg, model.home))));
-			default:
+			case 'LoginMsg':
 				var loginMsg = msg.a;
 				return A2(
 					$author$project$Sprig$applyEffects,
@@ -15289,6 +15490,22 @@ var $author$project$Base$update = F3(
 							$author$project$Sprig$mapMsg,
 							$author$project$Base$LoginMsg,
 							A3($author$project$Login$branch.update, context, loginMsg, model.login))));
+			default:
+				var registerMsg = msg.a;
+				return A2(
+					$author$project$Sprig$applyEffects,
+					$author$project$Base$applyRegisterEffects,
+					A2(
+						$author$project$Sprig$mapModel,
+						function (register) {
+							return _Utils_update(
+								model,
+								{register: register});
+						},
+						A2(
+							$author$project$Sprig$mapMsg,
+							$author$project$Base$RegisterMsg,
+							A3($author$project$Register$branch.update, context, registerMsg, model.register))));
 		}
 	});
 var $author$project$Base$urlChanged = F2(
@@ -15298,51 +15515,69 @@ var $author$project$Base$urlChanged = F2(
 			function (m) {
 				return A2(
 					$author$project$Sprig$applyEffects,
-					$author$project$Base$applyLoginEffects,
+					$author$project$Base$applyRegisterEffects,
 					A2(
 						$author$project$Sprig$mapModel,
-						function (login) {
+						function (register) {
 							return _Utils_update(
 								m,
-								{login: login});
+								{register: register});
 						},
 						A2(
 							$author$project$Sprig$mapMsg,
-							$author$project$Base$LoginMsg,
-							A2($author$project$Login$branch.urlChanged, context, m.login))));
+							$author$project$Base$RegisterMsg,
+							A2($author$project$Register$branch.urlChanged, context, m.register))));
 			},
 			A2(
 				$author$project$Sprig$andThen,
 				function (m) {
 					return A2(
 						$author$project$Sprig$applyEffects,
-						$author$project$Base$applyHomeEffects,
+						$author$project$Base$applyLoginEffects,
 						A2(
 							$author$project$Sprig$mapModel,
-							function (home) {
+							function (login) {
 								return _Utils_update(
 									m,
-									{home: home});
+									{login: login});
 							},
 							A2(
 								$author$project$Sprig$mapMsg,
-								$author$project$Base$HomeMsg,
-								A2($author$project$Home$branch.urlChanged, context, m.home))));
+								$author$project$Base$LoginMsg,
+								A2($author$project$Login$branch.urlChanged, context, m.login))));
 				},
 				A2(
-					$author$project$Sprig$applyEffects,
-					$author$project$Base$applyHeaderEffects,
+					$author$project$Sprig$andThen,
+					function (m) {
+						return A2(
+							$author$project$Sprig$applyEffects,
+							$author$project$Base$applyHomeEffects,
+							A2(
+								$author$project$Sprig$mapModel,
+								function (home) {
+									return _Utils_update(
+										m,
+										{home: home});
+								},
+								A2(
+									$author$project$Sprig$mapMsg,
+									$author$project$Base$HomeMsg,
+									A2($author$project$Home$branch.urlChanged, context, m.home))));
+					},
 					A2(
-						$author$project$Sprig$mapModel,
-						function (header) {
-							return _Utils_update(
-								model,
-								{header: header});
-						},
+						$author$project$Sprig$applyEffects,
+						$author$project$Base$applyHeaderEffects,
 						A2(
-							$author$project$Sprig$mapMsg,
-							$author$project$Base$HeaderMsg,
-							A2($author$project$Header$branch.urlChanged, context, model.header))))));
+							$author$project$Sprig$mapModel,
+							function (header) {
+								return _Utils_update(
+									model,
+									{header: header});
+							},
+							A2(
+								$author$project$Sprig$mapMsg,
+								$author$project$Base$HeaderMsg,
+								A2($author$project$Header$branch.urlChanged, context, model.header)))))));
 	});
 var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $author$project$Base$viewFooter = A2(
@@ -15411,6 +15646,10 @@ var $author$project$Base$view = F2(
 					$elm$html$Html$map,
 					$author$project$Base$LoginMsg,
 					A2($author$project$Login$branch.view, context, model.login)),
+					A2(
+					$elm$html$Html$map,
+					$author$project$Base$RegisterMsg,
+					A2($author$project$Register$branch.view, context, model.register)),
 					$author$project$Base$viewFooter
 				]));
 	});
@@ -15697,4 +15936,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$UrlRequested, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"TreeMsg":["Base.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Base.Msg":{"args":[],"tags":{"Login":[],"HeaderMsg":["Header.Msg"],"HomeMsg":["Home.Msg"],"LoginMsg":["Login.Msg"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Header.Msg":{"args":[],"tags":{"Login":[]}},"Home.Msg":{"args":[],"tags":{"TagSelected":["String.String"]}},"Login.Msg":{"args":[],"tags":{"EmailChanged":["String.String"],"Login":[],"PasswordChanged":["String.String"]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"TreeMsg":["Base.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Base.Msg":{"args":[],"tags":{"Login":[],"HeaderMsg":["Header.Msg"],"HomeMsg":["Home.Msg"],"LoginMsg":["Login.Msg"],"RegisterMsg":["Register.Msg"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Header.Msg":{"args":[],"tags":{"Login":[]}},"Home.Msg":{"args":[],"tags":{"TagSelected":["String.String"]}},"Login.Msg":{"args":[],"tags":{"EmailChanged":["String.String"],"Login":[],"PasswordChanged":["String.String"]}},"Register.Msg":{"args":[],"tags":{"UsernameChanged":["String.String"],"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Register":[]}}}}})}});}(this));

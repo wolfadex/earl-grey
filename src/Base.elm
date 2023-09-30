@@ -5,6 +5,7 @@ import Home
 import Html exposing (Html)
 import Html.Attributes
 import Login
+import Register
 import Sprig exposing (Sprig)
 import User exposing (User)
 
@@ -33,15 +34,21 @@ init context =
         ( login, loginEffects ) =
             Login.branch.init context
                 |> Sprig.extractModel
+
+        ( register, registerEffects ) =
+            Register.branch.init context
+                |> Sprig.extractModel
     in
     { header = header
     , home = home
     , login = login
+    , register = register
     }
         |> Sprig.save
         |> Sprig.withChildEffects HeaderMsg applyHeaderEffects headerEffects
         |> Sprig.withChildEffects HomeMsg applyHomeEffects homeEffects
         |> Sprig.withChildEffects LoginMsg applyLoginEffects loginEffects
+        |> Sprig.withChildEffects RegisterMsg applyRegisterEffects registerEffects
 
 
 applyHeaderEffects : Header.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
@@ -59,10 +66,16 @@ applyLoginEffects _ sprig =
     sprig
 
 
+applyRegisterEffects : Register.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
+applyRegisterEffects _ sprig =
+    sprig
+
+
 type alias Model =
     { header : Header.Model
     , home : Home.Model
     , login : Login.Model
+    , register : Register.Model
     }
 
 
@@ -83,6 +96,7 @@ type Msg
     | HeaderMsg Header.Msg
     | HomeMsg Home.Msg
     | LoginMsg Login.Msg
+    | RegisterMsg Register.Msg
 
 
 type Effect
@@ -115,6 +129,12 @@ update context msg model =
                 |> Sprig.mapModel (\login -> { model | login = login })
                 |> Sprig.applyEffects applyLoginEffects
 
+        RegisterMsg registerMsg ->
+            Register.branch.update context registerMsg model.register
+                |> Sprig.mapMsg RegisterMsg
+                |> Sprig.mapModel (\register -> { model | register = register })
+                |> Sprig.applyEffects applyRegisterEffects
+
 
 urlChanged : Sprig.Context (Maybe User) -> Model -> Sprig Model Msg Effect
 urlChanged context model =
@@ -136,6 +156,13 @@ urlChanged context model =
                     |> Sprig.mapModel (\login -> { m | login = login })
                     |> Sprig.applyEffects applyLoginEffects
             )
+        |> Sprig.andThen
+            (\m ->
+                Register.branch.urlChanged context m.register
+                    |> Sprig.mapMsg RegisterMsg
+                    |> Sprig.mapModel (\register -> { m | register = register })
+                    |> Sprig.applyEffects applyRegisterEffects
+            )
 
 
 view : Sprig.Context (Maybe User) -> Model -> Html Msg
@@ -147,6 +174,8 @@ view context model =
             |> Html.map HomeMsg
         , Login.branch.view context model.login
             |> Html.map LoginMsg
+        , Register.branch.view context model.register
+            |> Html.map RegisterMsg
         , viewFooter
         ]
 
