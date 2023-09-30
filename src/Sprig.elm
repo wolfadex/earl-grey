@@ -37,7 +37,7 @@ type alias Tree encodedFlags flags model msg effect =
 
 
 tree : (encodedFlags -> flags) -> Branch flags model msg effect -> Tree encodedFlags flags model msg effect
-tree decodeFlags branch =
+tree decodeFlags branch_ =
     { init =
         \flags_ url ->
             let
@@ -51,11 +51,11 @@ tree decodeFlags branch =
                         , relativePath = contextUrl.path
                         }
             in
-            ( branch.init context, context )
-    , subscriptions = branch.subscriptions
-    , urlChanged = branch.urlChanged
-    , update = branch.update
-    , view = branch.view
+            ( branch_.init context, context )
+    , subscriptions = branch_.subscriptions
+    , urlChanged = branch_.urlChanged
+    , update = branch_.update
+    , view = branch_.view
     }
 
 
@@ -66,6 +66,28 @@ type alias Branch flags model msg effect =
     , urlChanged : Context flags -> model -> Sprig model msg effect
     , view : Context flags -> model -> Html msg
     }
+
+
+type Route flags model msg effect
+    = Route (Branch flags model msg effect)
+
+
+branch :
+    { init : Context flags -> Sprig model msg effect
+    , subscriptions : Context flags -> model -> Sub msg
+    , update : Context flags -> msg -> model -> Sprig model msg effect
+    , urlChanged : Context flags -> model -> Sprig model msg effect
+    , view : Context flags -> model -> Html msg
+    }
+    -> Route flags model msg effect
+branch cfg =
+    Route
+        { init = cfg.init
+        , subscriptions = cfg.subscriptions
+        , update = cfg.update
+        , urlChanged = cfg.urlChanged
+        , view = cfg.view
+        }
 
 
 type Context flags

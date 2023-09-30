@@ -2,6 +2,7 @@ module Home exposing (Effect, Model, Msg, branch)
 
 import Html exposing (Html)
 import Html.Attributes
+import Html.Events
 import Sprig exposing (Sprig)
 import User exposing (User)
 
@@ -18,12 +19,14 @@ branch =
 
 init : Sprig.Context (Maybe User) -> Sprig Model Msg Effect
 init context =
-    {}
+    { tag = Nothing
+    }
         |> Sprig.save
 
 
 type alias Model =
-    {}
+    { tag : Maybe String
+    }
 
 
 type alias Effect =
@@ -31,7 +34,7 @@ type alias Effect =
 
 
 type Msg
-    = NoOp
+    = TagSelected String
 
 
 subscriptions : Sprig.Context (Maybe User) -> Model -> Sub Msg
@@ -40,8 +43,11 @@ subscriptions _ _ =
 
 
 update : Sprig.Context (Maybe User) -> Msg -> Model -> Sprig Model Msg Effect
-update _ _ model =
-    Sprig.save model
+update _ msg model =
+    case msg of
+        TagSelected tag ->
+            { model | tag = Just tag }
+                |> Sprig.save
 
 
 urlChanged : Sprig.Context (Maybe User) -> Model -> Sprig Model Msg Effect
@@ -50,10 +56,10 @@ urlChanged _ model =
 
 
 view : Sprig.Context (Maybe User) -> Model -> Html Msg
-view _ _ =
+view context model =
     Html.div [ Html.Attributes.class "home-page" ]
         [ viewBanner
-        , viewPageContainer
+        , viewPageContainer context model
         ]
 
 
@@ -67,100 +73,12 @@ viewBanner =
         ]
 
 
-viewPageContainer : Html msg
-viewPageContainer =
-    {-
-       <div class="container page">
-           <div class="row">
-           <div class="col-md-9">
-               <div class="feed-toggle">
-               <ul class="nav nav-pills outline-active">
-                   <li class="nav-item">
-                   <a class="nav-link" href="">Your Feed</a>
-                   </li>
-                   <li class="nav-item">
-                   <a class="nav-link active" href="">Global Feed</a>
-                   </li>
-               </ul>
-               </div>
-
-               <div class="article-preview">
-               <div class="article-meta">
-                   <a href="/profile/eric-simons"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                   <div class="info">
-                   <a href="/profile/eric-simons" class="author">Eric Simons</a>
-                   <span class="date">January 20th</span>
-                   </div>
-                   <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                   <i class="ion-heart"></i> 29
-                   </button>
-               </div>
-               <a href="/article/how-to-build-webapps-that-scale" class="preview-link">
-                   <h1>How to build webapps that scale</h1>
-                   <p>This is the description for the post.</p>
-                   <span>Read more...</span>
-                   <ul class="tag-list">
-                   <li class="tag-default tag-pill tag-outline">realworld</li>
-                   <li class="tag-default tag-pill tag-outline">implementations</li>
-                   </ul>
-               </a>
-               </div>
-
-               <div class="article-preview">
-               <div class="article-meta">
-                   <a href="/profile/albert-pai"><img src="http://i.imgur.com/N4VcUeJ.jpg" /></a>
-                   <div class="info">
-                   <a href="/profile/albert-pai" class="author">Albert Pai</a>
-                   <span class="date">January 20th</span>
-                   </div>
-                   <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                   <i class="ion-heart"></i> 32
-                   </button>
-               </div>
-               <a href="/article/the-song-you" class="preview-link">
-                   <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                   <p>This is the description for the post.</p>
-                   <span>Read more...</span>
-                   <ul class="tag-list">
-                   <li class="tag-default tag-pill tag-outline">realworld</li>
-                   <li class="tag-default tag-pill tag-outline">implementations</li>
-                   </ul>
-               </a>
-               </div>
-
-               <ul class="pagination">
-               <li class="page-item active">
-                   <a class="page-link" href="">1</a>
-               </li>
-               <li class="page-item">
-                   <a class="page-link" href="">2</a>
-               </li>
-               </ul>
-           </div>
-
-           <div class="col-md-3">
-               <div class="sidebar">
-               <p>Popular Tags</p>
-
-               <div class="tag-list">
-                   <a href="" class="tag-pill tag-default">programming</a>
-                   <a href="" class="tag-pill tag-default">javascript</a>
-                   <a href="" class="tag-pill tag-default">emberjs</a>
-                   <a href="" class="tag-pill tag-default">angularjs</a>
-                   <a href="" class="tag-pill tag-default">react</a>
-                   <a href="" class="tag-pill tag-default">mean</a>
-                   <a href="" class="tag-pill tag-default">node</a>
-                   <a href="" class="tag-pill tag-default">rails</a>
-               </div>
-               </div>
-           </div>
-           </div>
-       </div>
-    -}
+viewPageContainer : Sprig.Context (Maybe User) -> Model -> Html Msg
+viewPageContainer context model =
     Html.div [ Html.Attributes.class "container page" ]
         [ Html.div [ Html.Attributes.class "row" ]
             [ Html.div [ Html.Attributes.class "col-md-9" ]
-                [ viewFeedToggle
+                [ viewFeedToggle context model
                 , viewArticlePreview
                 , viewArticlePreview
                 , viewPagination
@@ -172,14 +90,26 @@ viewPageContainer =
         ]
 
 
-viewFeedToggle : Html msg
-viewFeedToggle =
+viewFeedToggle : Sprig.Context (Maybe User) -> Model -> Html msg
+viewFeedToggle context model =
     Html.div [ Html.Attributes.class "feed-toggle" ]
         [ Html.ul [ Html.Attributes.class "nav nav-pills outline-active" ]
-            [ Html.li [ Html.Attributes.class "nav-item" ]
-                [ Html.a [ Html.Attributes.class "nav-link" ] [ Html.text "Your Feed" ] ]
+            [ case Sprig.flags context of
+                Nothing ->
+                    Html.text ""
+
+                Just _ ->
+                    Html.li [ Html.Attributes.class "nav-item" ]
+                        [ Html.a [ Html.Attributes.class "nav-link" ] [ Html.text "Your Feed" ] ]
             , Html.li [ Html.Attributes.class "nav-item" ]
                 [ Html.a [ Html.Attributes.class "nav-link active" ] [ Html.text "Global Feed" ] ]
+            , case model.tag of
+                Nothing ->
+                    Html.text ""
+
+                Just tag ->
+                    Html.li [ Html.Attributes.class "nav-item" ]
+                        [ Html.span [ Html.Attributes.class "nav-link active" ] [ Html.text ("# " ++ tag) ] ]
             ]
         ]
 
@@ -231,18 +161,27 @@ viewPagination =
         ]
 
 
-viewSidebar : Html msg
+viewSidebar : Html Msg
 viewSidebar =
     Html.div [ Html.Attributes.class "sidebar" ]
         [ Html.p [] [ Html.text "Popular Tags" ]
         , Html.div [ Html.Attributes.class "tag-list" ]
-            [ Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "programming" ]
-            , Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "javascript" ]
-            , Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "emberjs" ]
-            , Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "angularjs" ]
-            , Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "react" ]
-            , Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "mean" ]
-            , Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "node" ]
-            , Html.a [ Html.Attributes.class "tag-pill tag-default", Html.Attributes.href "" ] [ Html.text "rails" ]
+            [ viewTagPill "programming"
+            , viewTagPill "javascript"
+            , viewTagPill "emberjs"
+            , viewTagPill "angularjs"
+            , viewTagPill "react"
+            , viewTagPill "mean"
+            , viewTagPill "node"
+            , viewTagPill "rails"
             ]
         ]
+
+
+viewTagPill : String -> Html Msg
+viewTagPill tag =
+    Html.span
+        [ Html.Attributes.class "tag-pill tag-default"
+        , Html.Events.onClick (TagSelected tag)
+        ]
+        [ Html.text tag ]

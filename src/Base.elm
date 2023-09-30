@@ -4,6 +4,7 @@ import Header
 import Home
 import Html exposing (Html)
 import Html.Attributes
+import Login
 import Sprig exposing (Sprig)
 import User exposing (User)
 
@@ -25,16 +26,40 @@ init context =
             Header.branch.init context
                 |> Sprig.extractModel
 
-        ( home, homeEffects ) =
-            Home.branch.init context
-                |> Sprig.extractModel
+        applyRoute =
+            case Sprig.absolutePath context of
+                [] ->
+                    let
+                        ( home, homeEffects ) =
+                            Home.branch.init context
+                                |> Sprig.extractModel
+                    in
+                    Sprig.mapModel (\model -> { model | home = Just home })
+                        >> Sprig.withChildEffects HomeMsg applyHomeEffects homeEffects
+
+                [ "login" ] ->
+                    let
+                        ( login, loginEffects ) =
+                            Login.branch.init context
+                                |> Sprig.extractModel
+                    in
+                    Sprig.mapModel (\model -> { model | login = Just login })
+                        >> Sprig.withChildEffects LoginMsg applyLoginEffects loginEffects
+
+                _ ->
+                    Debug.todo ""
     in
     { header = header
-    , home = home
+    , home = Nothing
+    , login = Nothing
     }
         |> Sprig.save
         |> Sprig.withChildEffects HeaderMsg applyHeaderEffects headerEffects
-        |> Sprig.withChildEffects HomeMsg applyHomeEffects homeEffects
+        |> applyRoute
+
+
+
+-- |> Sprig.withChildEffects routeMsgMap applyRouteEffs routeEffects
 
 
 applyHeaderEffects : Header.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
@@ -47,9 +72,15 @@ applyHomeEffects _ sprig =
     sprig
 
 
+applyLoginEffects : Login.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
+applyLoginEffects _ sprig =
+    sprig
+
+
 type alias Model =
-    { home : Home.Model
-    , header : Header.Model
+    { header : Header.Model
+    , home : Maybe Home.Model
+    , login : Maybe Login.Model
     }
 
 
@@ -58,8 +89,12 @@ subscriptions context model =
     Sub.batch
         [ Header.branch.subscriptions context model.header
             |> Sub.map HeaderMsg
-        , Home.branch.subscriptions context model.home
-            |> Sub.map HomeMsg
+        , model.home
+            |> Maybe.map (Home.branch.subscriptions context >> Sub.map HomeMsg)
+            |> Maybe.withDefault Sub.none
+        , model.login
+            |> Maybe.map (Login.branch.subscriptions context >> Sub.map LoginMsg)
+            |> Maybe.withDefault Sub.none
         ]
 
 
@@ -67,6 +102,7 @@ type Msg
     = Login
     | HeaderMsg Header.Msg
     | HomeMsg Home.Msg
+    | LoginMsg Login.Msg
 
 
 type Effect
@@ -88,10 +124,28 @@ update context msg model =
                 |> Sprig.applyEffects applyHeaderEffects
 
         HomeMsg homeMsg ->
-            Home.branch.update context homeMsg model.home
-                |> Sprig.mapMsg HomeMsg
-                |> Sprig.mapModel (\home -> { model | home = home })
-                |> Sprig.applyEffects applyHomeEffects
+            case model.home of
+                Nothing ->
+                    model
+                        |> Sprig.save
+
+                Just home_ ->
+                    Home.branch.update context homeMsg home_
+                        |> Sprig.mapMsg HomeMsg
+                        |> Sprig.mapModel (\home -> { model | home = Just home })
+                        |> Sprig.applyEffects applyHomeEffects
+
+        LoginMsg loginMsg ->
+            case model.login of
+                Nothing ->
+                    model
+                        |> Sprig.save
+
+                Just login_ ->
+                    Login.branch.update context loginMsg login_
+                        |> Sprig.mapMsg LoginMsg
+                        |> Sprig.mapModel (\login -> { model | login = Just login })
+                        |> Sprig.applyEffects applyLoginEffects
 
 
 urlChanged : Sprig.Context (Maybe User) -> Model -> Sprig Model Msg Effect
@@ -107,8 +161,19 @@ view context model =
     Html.div []
         [ Header.branch.view context model.header
             |> Html.map HeaderMsg
-        , Home.branch.view context model.home
-            |> Html.map HomeMsg
+        , case Sprig.absolutePath context of
+            [] ->
+                model.home
+                    |> Maybe.map (Home.branch.view context >> Html.map HomeMsg)
+                    |> Maybe.withDefault (Html.text "Loading home...")
+
+            [ "login" ] ->
+                model.login
+                    |> Maybe.map (Login.branch.view context >> Html.map LoginMsg)
+                    |> Maybe.withDefault (Html.text "Loading login...")
+
+            _ ->
+                Html.text "404"
         , viewFooter
         ]
 
