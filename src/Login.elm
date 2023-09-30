@@ -1,5 +1,6 @@
 module Login exposing
     ( Effect
+    , InternalModel
     , Model
     , Msg
     , branch
@@ -12,17 +13,24 @@ import Sprig exposing (Sprig)
 import User exposing (User)
 
 
-branch : Sprig.Branch (Maybe User) Model Msg Effect
+branch : Sprig.Route (Maybe User) InternalModel Msg Effect
 branch =
-    { init = init
-    , subscriptions = subscriptions
-    , update = update
-    , urlChanged = urlChanged
-    , view = view
-    }
+    Sprig.branch
+        { path = [ "login" ]
+        }
+        { init = init
+        , subscriptions = subscriptions
+        , update = update
+        , urlChanged = urlChanged
+        , view = view
+        }
 
 
 type alias Model =
+    Sprig.RouteModel InternalModel
+
+
+type alias InternalModel =
     { email : String
     , password : String
     }
@@ -32,13 +40,13 @@ type alias Effect =
     Never
 
 
-init : Sprig.Context (Maybe User) -> Sprig Model Msg Effect
+init : Sprig.Context (Maybe User) -> Sprig InternalModel Msg Effect
 init context =
     { email = "", password = "" }
         |> Sprig.save
 
 
-subscriptions : Sprig.Context (Maybe User) -> Model -> Sub Msg
+subscriptions : Sprig.Context (Maybe User) -> InternalModel -> Sub Msg
 subscriptions _ _ =
     Sub.none
 
@@ -51,7 +59,7 @@ type Msg
     | PasswordChanged String
 
 
-update : Sprig.Context (Maybe User) -> Msg -> Model -> Sprig Model Msg Effect
+update : Sprig.Context (Maybe User) -> Msg -> InternalModel -> Sprig InternalModel Msg Effect
 update context msg model =
     case msg of
         EmailChanged email ->
@@ -67,13 +75,13 @@ update context msg model =
                 |> Sprig.save
 
 
-urlChanged : Sprig.Context (Maybe User) -> Model -> Sprig Model Msg Effect
+urlChanged : Sprig.Context (Maybe User) -> InternalModel -> Sprig InternalModel Msg Effect
 urlChanged _ model =
     model
         |> Sprig.save
 
 
-view : Sprig.Context (Maybe User) -> Model -> Html Msg
+view : Sprig.Context (Maybe User) -> InternalModel -> Html Msg
 view context model =
     {-
        <div class="col-md-6 offset-md-3 col-xs-12">

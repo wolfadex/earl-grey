@@ -5,7 +5,7 @@ module Sprig exposing
     , mapModel, mapMsg
     , andThen
     , applyEffects
-    , Branch, Context, Tree, absolutePath, extractModel, flags, relativePath, tree, urlChanged, withChildEffects
+    , Branch, Context, Route, RouteModel, Tree, absolutePath, branch, extractModel, flags, relativePath, tree, urlChanged, withChildEffects
     )
 
 {-|
@@ -68,26 +68,71 @@ type alias Branch flags model msg effect =
     }
 
 
-type Route flags model msg effect
-    = Route (Branch flags model msg effect)
+type alias Route flags model msg effect =
+    Branch flags (Maybe model) msg effect
+
+
+type alias RouteModel model =
+    Maybe model
 
 
 branch :
-    { init : Context flags -> Sprig model msg effect
-    , subscriptions : Context flags -> model -> Sub msg
-    , update : Context flags -> msg -> model -> Sprig model msg effect
-    , urlChanged : Context flags -> model -> Sprig model msg effect
-    , view : Context flags -> model -> Html msg
-    }
+    { path : List String }
+    -> Branch flags model msg effect
     -> Route flags model msg effect
-branch cfg =
-    Route
-        { init = cfg.init
-        , subscriptions = cfg.subscriptions
-        , update = cfg.update
-        , urlChanged = cfg.urlChanged
-        , view = cfg.view
-        }
+branch cfg branch_ =
+    { init =
+        \ctx ->
+            if relativePath ctx == cfg.path then
+                branch_.init ctx
+                    |> mapModel Just
+
+            else
+                save Nothing
+    , subscriptions =
+        \ctx model ->
+            case model of
+                Nothing ->
+                    Sub.none
+
+                Just m ->
+                    branch_.subscriptions ctx m
+    , update =
+        \ctx msg model ->
+            case model of
+                Nothing ->
+                    save model
+
+                Just m ->
+                    branch_.update ctx msg m
+                        |> mapModel Just
+    , urlChanged =
+        \ctx model ->
+            if relativePath ctx == cfg.path then
+                case model of
+                    Nothing ->
+                        branch_.init ctx
+                            |> mapModel Just
+
+                    Just m ->
+                        branch_.urlChanged ctx m
+                            |> mapModel Just
+
+            else
+                save model
+    , view =
+        \ctx model ->
+            if relativePath ctx == cfg.path then
+                case model of
+                    Nothing ->
+                        Html.text ""
+
+                    Just m ->
+                        branch_.view ctx m
+
+            else
+                Html.text ""
+    }
 
 
 type Context flags

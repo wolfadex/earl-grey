@@ -608,7 +608,7 @@ ${variant}`;
   var VERSION = "1.2.0-beta.3";
   var TARGET_NAME = "My target name";
   var INITIAL_ELM_COMPILED_TIMESTAMP = Number(
-    "1696035505511"
+    "1696040336378"
   );
   var ORIGINAL_COMPILATION_MODE = "debug";
   var ORIGINAL_BROWSER_UI_POSITION = "BottomLeft";
@@ -13895,10 +13895,6 @@ var $author$project$Base$HomeMsg = function (a) {
 var $author$project$Base$LoginMsg = function (a) {
 	return {$: 'LoginMsg', a: a};
 };
-var $author$project$Sprig$absolutePath = function (_v0) {
-	var context = _v0.a;
-	return context.url.path;
-};
 var $author$project$Base$applyHeaderEffects = F2(
 	function (_v0, sprig) {
 		return sprig;
@@ -13944,6 +13940,10 @@ var $author$project$Header$urlChanged = F2(
 		return $author$project$Sprig$save(
 			{});
 	});
+var $author$project$Sprig$absolutePath = function (_v0) {
+	var context = _v0.a;
+	return context.url.path;
+};
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -14402,6 +14402,80 @@ var $author$project$Header$view = F2(
 				]));
 	});
 var $author$project$Header$branch = {init: $author$project$Header$init, subscriptions: $author$project$Header$subscriptions, update: $author$project$Header$update, urlChanged: $author$project$Header$urlChanged, view: $author$project$Header$view};
+var $author$project$Sprig$relativePath = function (_v0) {
+	var context = _v0.a;
+	return context.relativePath;
+};
+var $author$project$Sprig$branch = F2(
+	function (cfg, branch_) {
+		return {
+			init: function (ctx) {
+				return _Utils_eq(
+					$author$project$Sprig$relativePath(ctx),
+					cfg.path) ? A2(
+					$author$project$Sprig$mapModel,
+					$elm$core$Maybe$Just,
+					branch_.init(ctx)) : $author$project$Sprig$save($elm$core$Maybe$Nothing);
+			},
+			subscriptions: F2(
+				function (ctx, model) {
+					if (model.$ === 'Nothing') {
+						return $elm$core$Platform$Sub$none;
+					} else {
+						var m = model.a;
+						return A2(branch_.subscriptions, ctx, m);
+					}
+				}),
+			update: F3(
+				function (ctx, msg, model) {
+					if (model.$ === 'Nothing') {
+						return $author$project$Sprig$save(model);
+					} else {
+						var m = model.a;
+						return A2(
+							$author$project$Sprig$mapModel,
+							$elm$core$Maybe$Just,
+							A3(branch_.update, ctx, msg, m));
+					}
+				}),
+			urlChanged: F2(
+				function (ctx, model) {
+					if (_Utils_eq(
+						$author$project$Sprig$relativePath(ctx),
+						cfg.path)) {
+						if (model.$ === 'Nothing') {
+							return A2(
+								$author$project$Sprig$mapModel,
+								$elm$core$Maybe$Just,
+								branch_.init(ctx));
+						} else {
+							var m = model.a;
+							return A2(
+								$author$project$Sprig$mapModel,
+								$elm$core$Maybe$Just,
+								A2(branch_.urlChanged, ctx, m));
+						}
+					} else {
+						return $author$project$Sprig$save(model);
+					}
+				}),
+			view: F2(
+				function (ctx, model) {
+					if (_Utils_eq(
+						$author$project$Sprig$relativePath(ctx),
+						cfg.path)) {
+						if (model.$ === 'Nothing') {
+							return $elm$html$Html$text('');
+						} else {
+							var m = model.a;
+							return A2(branch_.view, ctx, m);
+						}
+					} else {
+						return $elm$html$Html$text('');
+					}
+				})
+		};
+	});
 var $author$project$Home$init = function (context) {
 	return $author$project$Sprig$save(
 		{tag: $elm$core$Maybe$Nothing});
@@ -14855,7 +14929,10 @@ var $author$project$Home$view = F2(
 					A2($author$project$Home$viewPageContainer, context, model)
 				]));
 	});
-var $author$project$Home$branch = {init: $author$project$Home$init, subscriptions: $author$project$Home$subscriptions, update: $author$project$Home$update, urlChanged: $author$project$Home$urlChanged, view: $author$project$Home$view};
+var $author$project$Home$branch = A2(
+	$author$project$Sprig$branch,
+	{path: _List_Nil},
+	{init: $author$project$Home$init, subscriptions: $author$project$Home$subscriptions, update: $author$project$Home$update, urlChanged: $author$project$Home$urlChanged, view: $author$project$Home$view});
 var $author$project$Login$init = function (context) {
 	return $author$project$Sprig$save(
 		{email: '', password: ''});
@@ -15064,7 +15141,13 @@ var $author$project$Login$view = F2(
 						]))
 				]));
 	});
-var $author$project$Login$branch = {init: $author$project$Login$init, subscriptions: $author$project$Login$subscriptions, update: $author$project$Login$update, urlChanged: $author$project$Login$urlChanged, view: $author$project$Login$view};
+var $author$project$Login$branch = A2(
+	$author$project$Sprig$branch,
+	{
+		path: _List_fromArray(
+			['login'])
+	},
+	{init: $author$project$Login$init, subscriptions: $author$project$Login$subscriptions, update: $author$project$Login$update, urlChanged: $author$project$Login$urlChanged, view: $author$project$Login$view});
 var $author$project$Sprig$Effects = function (a) {
 	return {$: 'Effects', a: a};
 };
@@ -15075,7 +15158,6 @@ var $author$project$Sprig$extractModel = function (_v0) {
 		$author$project$Sprig$Effects(
 			{cmds: update.cmds, effects: _List_Nil}));
 };
-var $elm$core$Debug$todo = _Debug_todo;
 var $author$project$Sprig$withChildEffects = F4(
 	function (mapMsgFn, applyEffectFn, _v0, _v1) {
 		var effs = _v0.a;
@@ -15097,74 +15179,36 @@ var $author$project$Sprig$withChildEffects = F4(
 			effs.effects);
 	});
 var $author$project$Base$init = function (context) {
-	var applyRoute = function () {
-		var _v1 = $author$project$Sprig$absolutePath(context);
-		if (!_v1.b) {
-			var _v2 = $author$project$Sprig$extractModel(
-				$author$project$Home$branch.init(context));
-			var home = _v2.a;
-			var homeEffects = _v2.b;
-			return A2(
-				$elm$core$Basics$composeR,
-				$author$project$Sprig$mapModel(
-					function (model) {
-						return _Utils_update(
-							model,
-							{
-								home: $elm$core$Maybe$Just(home)
-							});
-					}),
-				A3($author$project$Sprig$withChildEffects, $author$project$Base$HomeMsg, $author$project$Base$applyHomeEffects, homeEffects));
-		} else {
-			if ((_v1.a === 'login') && (!_v1.b.b)) {
-				var _v3 = $author$project$Sprig$extractModel(
-					$author$project$Login$branch.init(context));
-				var login = _v3.a;
-				var loginEffects = _v3.b;
-				return A2(
-					$elm$core$Basics$composeR,
-					$author$project$Sprig$mapModel(
-						function (model) {
-							return _Utils_update(
-								model,
-								{
-									login: $elm$core$Maybe$Just(login)
-								});
-						}),
-					A3($author$project$Sprig$withChildEffects, $author$project$Base$LoginMsg, $author$project$Base$applyLoginEffects, loginEffects));
-			} else {
-				return _Debug_todo(
-					'Base',
-					{
-						start: {line: 50, column: 21},
-						end: {line: 50, column: 31}
-					})('');
-			}
-		}
-	}();
 	var _v0 = $author$project$Sprig$extractModel(
+		$author$project$Login$branch.init(context));
+	var login = _v0.a;
+	var loginEffects = _v0.b;
+	var _v1 = $author$project$Sprig$extractModel(
+		$author$project$Home$branch.init(context));
+	var home = _v1.a;
+	var homeEffects = _v1.b;
+	var _v2 = $author$project$Sprig$extractModel(
 		$author$project$Header$branch.init(context));
-	var header = _v0.a;
-	var headerEffects = _v0.b;
-	return applyRoute(
+	var header = _v2.a;
+	var headerEffects = _v2.b;
+	return A4(
+		$author$project$Sprig$withChildEffects,
+		$author$project$Base$LoginMsg,
+		$author$project$Base$applyLoginEffects,
+		loginEffects,
 		A4(
 			$author$project$Sprig$withChildEffects,
-			$author$project$Base$HeaderMsg,
-			$author$project$Base$applyHeaderEffects,
-			headerEffects,
-			$author$project$Sprig$save(
-				{header: header, home: $elm$core$Maybe$Nothing, login: $elm$core$Maybe$Nothing})));
+			$author$project$Base$HomeMsg,
+			$author$project$Base$applyHomeEffects,
+			homeEffects,
+			A4(
+				$author$project$Sprig$withChildEffects,
+				$author$project$Base$HeaderMsg,
+				$author$project$Base$applyHeaderEffects,
+				headerEffects,
+				$author$project$Sprig$save(
+					{header: header, home: home, login: login}))));
 };
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
 var $author$project$Base$subscriptions = F2(
 	function (context, model) {
 		return $elm$core$Platform$Sub$batch(
@@ -15175,25 +15219,13 @@ var $author$project$Base$subscriptions = F2(
 					$author$project$Base$HeaderMsg,
 					A2($author$project$Header$branch.subscriptions, context, model.header)),
 					A2(
-					$elm$core$Maybe$withDefault,
-					$elm$core$Platform$Sub$none,
+					$elm$core$Platform$Sub$map,
+					$author$project$Base$HomeMsg,
+					A2($author$project$Home$branch.subscriptions, context, model.home)),
 					A2(
-						$elm$core$Maybe$map,
-						A2(
-							$elm$core$Basics$composeR,
-							$author$project$Home$branch.subscriptions(context),
-							$elm$core$Platform$Sub$map($author$project$Base$HomeMsg)),
-						model.home)),
-					A2(
-					$elm$core$Maybe$withDefault,
-					$elm$core$Platform$Sub$none,
-					A2(
-						$elm$core$Maybe$map,
-						A2(
-							$elm$core$Basics$composeR,
-							$author$project$Login$branch.subscriptions(context),
-							$elm$core$Platform$Sub$map($author$project$Base$LoginMsg)),
-						model.login))
+					$elm$core$Platform$Sub$map,
+					$author$project$Base$LoginMsg,
+					A2($author$project$Login$branch.subscriptions, context, model.login))
 				]));
 	});
 var $author$project$Base$Navigate = function (a) {
@@ -15227,11 +15259,61 @@ var $author$project$Base$update = F3(
 							A3($author$project$Header$branch.update, context, headerMsg, model.header))));
 			case 'HomeMsg':
 				var homeMsg = msg.a;
-				var _v1 = model.home;
-				if (_v1.$ === 'Nothing') {
-					return $author$project$Sprig$save(model);
-				} else {
-					var home_ = _v1.a;
+				return A2(
+					$author$project$Sprig$applyEffects,
+					$author$project$Base$applyHomeEffects,
+					A2(
+						$author$project$Sprig$mapModel,
+						function (home) {
+							return _Utils_update(
+								model,
+								{home: home});
+						},
+						A2(
+							$author$project$Sprig$mapMsg,
+							$author$project$Base$HomeMsg,
+							A3($author$project$Home$branch.update, context, homeMsg, model.home))));
+			default:
+				var loginMsg = msg.a;
+				return A2(
+					$author$project$Sprig$applyEffects,
+					$author$project$Base$applyLoginEffects,
+					A2(
+						$author$project$Sprig$mapModel,
+						function (login) {
+							return _Utils_update(
+								model,
+								{login: login});
+						},
+						A2(
+							$author$project$Sprig$mapMsg,
+							$author$project$Base$LoginMsg,
+							A3($author$project$Login$branch.update, context, loginMsg, model.login))));
+		}
+	});
+var $author$project$Base$urlChanged = F2(
+	function (context, model) {
+		return A2(
+			$author$project$Sprig$andThen,
+			function (m) {
+				return A2(
+					$author$project$Sprig$applyEffects,
+					$author$project$Base$applyLoginEffects,
+					A2(
+						$author$project$Sprig$mapModel,
+						function (login) {
+							return _Utils_update(
+								m,
+								{login: login});
+						},
+						A2(
+							$author$project$Sprig$mapMsg,
+							$author$project$Base$LoginMsg,
+							A2($author$project$Login$branch.urlChanged, context, m.login))));
+			},
+			A2(
+				$author$project$Sprig$andThen,
+				function (m) {
 					return A2(
 						$author$project$Sprig$applyEffects,
 						$author$project$Base$applyHomeEffects,
@@ -15239,58 +15321,28 @@ var $author$project$Base$update = F3(
 							$author$project$Sprig$mapModel,
 							function (home) {
 								return _Utils_update(
-									model,
-									{
-										home: $elm$core$Maybe$Just(home)
-									});
+									m,
+									{home: home});
 							},
 							A2(
 								$author$project$Sprig$mapMsg,
 								$author$project$Base$HomeMsg,
-								A3($author$project$Home$branch.update, context, homeMsg, home_))));
-				}
-			default:
-				var loginMsg = msg.a;
-				var _v2 = model.login;
-				if (_v2.$ === 'Nothing') {
-					return $author$project$Sprig$save(model);
-				} else {
-					var login_ = _v2.a;
-					return A2(
-						$author$project$Sprig$applyEffects,
-						$author$project$Base$applyLoginEffects,
-						A2(
-							$author$project$Sprig$mapModel,
-							function (login) {
-								return _Utils_update(
-									model,
-									{
-										login: $elm$core$Maybe$Just(login)
-									});
-							},
-							A2(
-								$author$project$Sprig$mapMsg,
-								$author$project$Base$LoginMsg,
-								A3($author$project$Login$branch.update, context, loginMsg, login_))));
-				}
-		}
-	});
-var $author$project$Base$urlChanged = F2(
-	function (context, model) {
-		return A2(
-			$author$project$Sprig$applyEffects,
-			$author$project$Base$applyHeaderEffects,
-			A2(
-				$author$project$Sprig$mapModel,
-				function (header) {
-					return _Utils_update(
-						model,
-						{header: header});
+								A2($author$project$Home$branch.urlChanged, context, m.home))));
 				},
 				A2(
-					$author$project$Sprig$mapMsg,
-					$author$project$Base$HeaderMsg,
-					A2($author$project$Header$branch.urlChanged, context, model.header))));
+					$author$project$Sprig$applyEffects,
+					$author$project$Base$applyHeaderEffects,
+					A2(
+						$author$project$Sprig$mapModel,
+						function (header) {
+							return _Utils_update(
+								model,
+								{header: header});
+						},
+						A2(
+							$author$project$Sprig$mapMsg,
+							$author$project$Base$HeaderMsg,
+							A2($author$project$Header$branch.urlChanged, context, model.header))))));
 	});
 var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $author$project$Base$viewFooter = A2(
@@ -15351,36 +15403,14 @@ var $author$project$Base$view = F2(
 					$elm$html$Html$map,
 					$author$project$Base$HeaderMsg,
 					A2($author$project$Header$branch.view, context, model.header)),
-					function () {
-					var _v0 = $author$project$Sprig$absolutePath(context);
-					if (!_v0.b) {
-						return A2(
-							$elm$core$Maybe$withDefault,
-							$elm$html$Html$text('Loading home...'),
-							A2(
-								$elm$core$Maybe$map,
-								A2(
-									$elm$core$Basics$composeR,
-									$author$project$Home$branch.view(context),
-									$elm$html$Html$map($author$project$Base$HomeMsg)),
-								model.home));
-					} else {
-						if ((_v0.a === 'login') && (!_v0.b.b)) {
-							return A2(
-								$elm$core$Maybe$withDefault,
-								$elm$html$Html$text('Loading login...'),
-								A2(
-									$elm$core$Maybe$map,
-									A2(
-										$elm$core$Basics$composeR,
-										$author$project$Login$branch.view(context),
-										$elm$html$Html$map($author$project$Base$LoginMsg)),
-									model.login));
-						} else {
-							return $elm$html$Html$text('404');
-						}
-					}
-				}(),
+					A2(
+					$elm$html$Html$map,
+					$author$project$Base$HomeMsg,
+					A2($author$project$Home$branch.view, context, model.home)),
+					A2(
+					$elm$html$Html$map,
+					$author$project$Base$LoginMsg,
+					A2($author$project$Login$branch.view, context, model.login)),
 					$author$project$Base$viewFooter
 				]));
 	});
@@ -15409,6 +15439,16 @@ var $elm$core$Result$toMaybe = function (result) {
 var $author$project$Sprig$Context = function (a) {
 	return {$: 'Context', a: a};
 };
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$url$Url$percentDecode = _Url_percentDecode;
 var $lydell$elm_app_url$AppUrl$percentDecode = function (string) {
 	return A2(
