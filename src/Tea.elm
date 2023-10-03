@@ -1,5 +1,5 @@
-module Sprig exposing
-    ( Sprig
+module Tea exposing
+    ( Tea
     , save, complete
     , withCmd, withMsg, withEffect
     , mapModel, mapMsg
@@ -10,7 +10,7 @@ module Sprig exposing
 
 {-|
 
-@docs Sprig
+@docs Tea
 
 @docs save, complete
 
@@ -28,10 +28,10 @@ import Url exposing (Url)
 
 
 type alias Tree encodedFlags flags model msg effect =
-    { init : encodedFlags -> Url -> ( Sprig model msg effect, Context flags )
+    { init : encodedFlags -> Url -> ( Tea model msg effect, Context flags )
     , subscriptions : Context flags -> model -> Sub msg
-    , update : Context flags -> msg -> model -> Sprig model msg effect
-    , urlChanged : Context flags -> model -> Sprig model msg effect
+    , update : Context flags -> msg -> model -> Tea model msg effect
+    , urlChanged : Context flags -> model -> Tea model msg effect
     , view : Context flags -> model -> Html msg
     }
 
@@ -60,10 +60,10 @@ tree decodeFlags branch_ =
 
 
 type alias Branch flags model msg effect =
-    { init : Context flags -> Sprig model msg effect
+    { init : Context flags -> Tea model msg effect
     , subscriptions : Context flags -> model -> Sub msg
-    , update : Context flags -> msg -> model -> Sprig model msg effect
-    , urlChanged : Context flags -> model -> Sprig model msg effect
+    , update : Context flags -> msg -> model -> Tea model msg effect
+    , urlChanged : Context flags -> model -> Tea model msg effect
     , view : Context flags -> model -> Html msg
     }
 
@@ -194,43 +194,43 @@ consumePath pathToTake (Context context) =
         }
 
 
-type Sprig model msg effect
-    = Sprig
+type Tea model msg effect
+    = Tea
         { model : model
         , cmds : List (Cmd msg)
         , effects : List effect
         }
 
 
-save : model -> Sprig model msg effect
+save : model -> Tea model msg effect
 save model =
-    Sprig { model = model, cmds = [], effects = [] }
+    Tea { model = model, cmds = [], effects = [] }
 
 
-withCmd : Cmd msg -> Sprig model msg effect -> Sprig model msg effect
-withCmd cmd (Sprig update) =
-    Sprig { update | cmds = cmd :: update.cmds }
+withCmd : Cmd msg -> Tea model msg effect -> Tea model msg effect
+withCmd cmd (Tea update) =
+    Tea { update | cmds = cmd :: update.cmds }
 
 
-withMsg : msg -> Sprig model msg effect -> Sprig model msg effect
-withMsg msg (Sprig update) =
-    Sprig { update | cmds = msgToCmd msg :: update.cmds }
+withMsg : msg -> Tea model msg effect -> Tea model msg effect
+withMsg msg (Tea update) =
+    Tea { update | cmds = msgToCmd msg :: update.cmds }
 
 
-withEffect : effect -> Sprig model msg effect -> Sprig model msg effect
-withEffect effect (Sprig update) =
-    Sprig { update | effects = effect :: update.effects }
+withEffect : effect -> Tea model msg effect -> Tea model msg effect
+withEffect effect (Tea update) =
+    Tea { update | effects = effect :: update.effects }
 
 
 withChildEffects :
     (childMsg -> parentMsg)
-    -> (childEffect -> Sprig model parentMsg parentEffect -> Sprig model parentMsg parentEffect)
+    -> (childEffect -> Tea model parentMsg parentEffect -> Tea model parentMsg parentEffect)
     -> Effects childMsg childEffect
-    -> Sprig model parentMsg parentEffect
-    -> Sprig model parentMsg parentEffect
-withChildEffects mapMsgFn applyEffectFn (Effects effs) (Sprig update) =
+    -> Tea model parentMsg parentEffect
+    -> Tea model parentMsg parentEffect
+withChildEffects mapMsgFn applyEffectFn (Effects effs) (Tea update) =
     List.foldl applyEffectFn
-        (Sprig
+        (Tea
             { model = update.model
             , cmds = update.cmds ++ List.map (Cmd.map mapMsgFn) effs.cmds
             , effects = update.effects
@@ -246,31 +246,31 @@ msgToCmd msg =
         |> Task.perform identity
 
 
-mapModel : (model1 -> model2) -> Sprig model1 msg effect -> Sprig model2 msg effect
-mapModel fn (Sprig update) =
-    Sprig
+mapModel : (model1 -> model2) -> Tea model1 msg effect -> Tea model2 msg effect
+mapModel fn (Tea update) =
+    Tea
         { model = fn update.model
         , cmds = update.cmds
         , effects = update.effects
         }
 
 
-mapMsg : (msg1 -> msg2) -> Sprig model msg1 effect -> Sprig model msg2 effect
-mapMsg fn (Sprig update) =
-    Sprig
+mapMsg : (msg1 -> msg2) -> Tea model msg1 effect -> Tea model msg2 effect
+mapMsg fn (Tea update) =
+    Tea
         { model = update.model
         , cmds = List.map (Cmd.map fn) update.cmds
         , effects = update.effects
         }
 
 
-andThen : (model1 -> Sprig model2 msg effects) -> Sprig model1 msg effects -> Sprig model2 msg effects
-andThen fn (Sprig update1) =
+andThen : (model1 -> Tea model2 msg effects) -> Tea model1 msg effects -> Tea model2 msg effects
+andThen fn (Tea update1) =
     let
-        (Sprig update2) =
+        (Tea update2) =
             fn update1.model
     in
-    Sprig
+    Tea
         { model = update2.model
         , cmds = update2.cmds ++ update1.cmds
         , effects = update2.effects
@@ -278,12 +278,12 @@ andThen fn (Sprig update1) =
 
 
 applyEffects :
-    (childEffect -> Sprig model msg parentEffect -> Sprig model msg parentEffect)
-    -> Sprig model msg childEffect
-    -> Sprig model msg parentEffect
-applyEffects fn (Sprig update) =
+    (childEffect -> Tea model msg parentEffect -> Tea model msg parentEffect)
+    -> Tea model msg childEffect
+    -> Tea model msg parentEffect
+applyEffects fn (Tea update) =
     List.foldr fn
-        (Sprig
+        (Tea
             { model = update.model
             , cmds = update.cmds
             , effects = []
@@ -292,8 +292,8 @@ applyEffects fn (Sprig update) =
         update.effects
 
 
-extractModel : Sprig model msg effect -> ( model, Effects msg effect )
-extractModel (Sprig update) =
+extractModel : Tea model msg effect -> ( model, Effects msg effect )
+extractModel (Tea update) =
     ( update.model
     , Effects
         { cmds = update.cmds
@@ -309,6 +309,6 @@ type Effects msg effect
         }
 
 
-complete : Sprig model msg effect -> ( model, Cmd msg )
-complete (Sprig update) =
+complete : Tea model msg effect -> ( model, Cmd msg )
+complete (Tea update) =
     ( update.model, Cmd.batch update.cmds )

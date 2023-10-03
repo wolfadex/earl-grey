@@ -1,14 +1,15 @@
 module Header exposing (Effect(..), Model, Msg(..), branch)
 
+import Api
 import AppUrl
+import Context exposing (Context)
 import Dict
 import Html exposing (Html)
 import Html.Attributes
-import Sprig exposing (Sprig)
-import User exposing (User)
+import Tea exposing (Tea)
 
 
-branch : Sprig.Branch (Maybe User) Model Msg Effect
+branch : Context.Branch Model Msg Effect
 branch =
     { init = init
     , subscriptions = subscriptions
@@ -18,17 +19,17 @@ branch =
     }
 
 
-init : Sprig.Context (Maybe User) -> Sprig Model Msg Effect
+init : Context -> Tea Model Msg Effect
 init _ =
     {}
-        |> Sprig.save
+        |> Tea.save
 
 
 type alias Model =
     {}
 
 
-subscriptions : Sprig.Context (Maybe User) -> Model -> Sub Msg
+subscriptions : Context -> Model -> Sub Msg
 subscriptions _ _ =
     Sub.none
 
@@ -41,22 +42,22 @@ type Effect
     = Navigate
 
 
-update : Sprig.Context (Maybe User) -> Msg -> Model -> Sprig Model Msg Effect
+update : Context -> Msg -> Model -> Tea Model Msg Effect
 update _ msg model =
     case msg of
         Login ->
             model
-                |> Sprig.save
-                |> Sprig.withEffect Navigate
+                |> Tea.save
+                |> Tea.withEffect Navigate
 
 
-urlChanged : Sprig.Context (Maybe User) -> Model -> Sprig Model Msg Effect
+urlChanged : Context -> Model -> Tea Model Msg Effect
 urlChanged _ _ =
     {}
-        |> Sprig.save
+        |> Tea.save
 
 
-view : Sprig.Context (Maybe User) -> Model -> Html Msg
+view : Context -> Model -> Html Msg
 view context _ =
     Html.nav [ Html.Attributes.class "navbar navbar-light" ]
         [ Html.div [ Html.Attributes.class "container" ]
@@ -64,21 +65,21 @@ view context _ =
                 [ Html.text "conduit" ]
             , Html.ul
                 [ Html.Attributes.class "nav navbar-nav pull-xs-right" ]
-                ([ ( True, link (Sprig.absolutePath context) { label = Html.text "Home", path = [] } )
-                 , ( Sprig.flags context == Nothing
-                   , link (Sprig.absolutePath context)
+                ([ ( True, link (Tea.absolutePath context) { label = Html.text "Home", path = [] } )
+                 , ( Tea.flags context == Nothing
+                   , link (Tea.absolutePath context)
                         { label = Html.text "Sign in"
                         , path = [ "login" ]
                         }
                    )
-                 , ( Sprig.flags context == Nothing
-                   , link (Sprig.absolutePath context)
+                 , ( Tea.flags context == Nothing
+                   , link (Tea.absolutePath context)
                         { label = Html.text "Sign up"
                         , path = [ "register" ]
                         }
                    )
-                 , ( Sprig.flags context /= Nothing
-                   , link (Sprig.absolutePath context)
+                 , ( Tea.flags context /= Nothing
+                   , link (Tea.absolutePath context)
                         { label =
                             Html.div []
                                 [ Html.i [ Html.Attributes.class "ion-compose" ] []
@@ -87,8 +88,8 @@ view context _ =
                         , path = [ "editor" ]
                         }
                    )
-                 , ( Sprig.flags context /= Nothing
-                   , link (Sprig.absolutePath context)
+                 , ( Tea.flags context /= Nothing
+                   , link (Tea.absolutePath context)
                         { label =
                             Html.div []
                                 [ Html.i [ Html.Attributes.class "ion-gear-a" ] []
@@ -97,17 +98,17 @@ view context _ =
                         , path = [ "settings" ]
                         }
                    )
-                 , case Sprig.flags context of
+                 , case Tea.flags context of
                     Nothing ->
                         ( False, Html.text "" )
 
                     Just user ->
                         ( True
-                        , link (Sprig.absolutePath context)
-                            { label = Html.text (User.username user)
+                        , link (Tea.absolutePath context)
+                            { label = Html.text user.username
                             , path =
                                 [ "profile"
-                                , User.username user
+                                , user.username
                                     |> String.toLower
                                     |> String.replace " " "-"
                                 ]

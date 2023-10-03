@@ -1,14 +1,15 @@
 module Main exposing (Effect, Model, Msg(..), main)
 
+import Api
 import Base
 import Browser
 import Browser.Navigation
+import Context exposing (Context)
 import Html
 import Json.Decode
 import Json.Encode
-import Sprig exposing (Sprig)
+import Tea exposing (Tea)
 import Url exposing (Url)
-import User exposing (User)
 
 
 main : Program Json.Encode.Value Model Msg
@@ -23,17 +24,17 @@ main =
         }
 
 
-tree : Sprig.Tree Json.Encode.Value (Maybe User) Base.Model Base.Msg Base.Effect
+tree : Tea.Tree Json.Encode.Value Context.Flags Base.Model Base.Msg Base.Effect
 tree =
-    Sprig.tree
-        (Json.Decode.decodeValue User.decode >> Result.toMaybe)
+    Tea.tree
+        (Json.Decode.decodeValue Api.decodeUser >> Result.toMaybe)
         Base.branch
 
 
 type alias Model =
     { navKey : Browser.Navigation.Key
     , root : Base.Model
-    , context : Sprig.Context (Maybe User)
+    , context : Context
     }
 
 
@@ -44,22 +45,22 @@ init flags url navKey =
             tree.init flags url
     in
     initialSprig
-        |> Sprig.mapMsg TreeMsg
-        |> Sprig.mapModel (\root -> { root = root, navKey = navKey, context = initialContext })
-        |> Sprig.applyEffects applyCarlEffects
-        |> Sprig.complete
+        |> Tea.mapMsg TreeMsg
+        |> Tea.mapModel (\root -> { root = root, navKey = navKey, context = initialContext })
+        |> Tea.applyEffects applyCarlEffects
+        |> Tea.complete
 
 
-applyCarlEffects : Base.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
+applyCarlEffects : Base.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
 applyCarlEffects eff sprig =
     case eff of
         Base.Navigate url ->
             sprig
-                |> Sprig.andThen
+                |> Tea.andThen
                     (\model ->
                         model
-                            |> Sprig.save
-                            |> Sprig.withCmd (Browser.Navigation.pushUrl model.navKey (String.join "/" url))
+                            |> Tea.save
+                            |> Tea.withCmd (Browser.Navigation.pushUrl model.navKey (String.join "/" url))
                     )
 
 
@@ -96,22 +97,22 @@ update msg model =
 
         UrlChanged url ->
             let
-                newContext : Sprig.Context (Maybe User)
+                newContext : Context
                 newContext =
-                    Sprig.urlChanged url model.context
+                    Tea.urlChanged url model.context
             in
             tree.urlChanged newContext model.root
-                |> Sprig.mapMsg TreeMsg
-                |> Sprig.mapModel (\root -> { model | root = root, context = newContext })
-                |> Sprig.applyEffects applyCarlEffects
-                |> Sprig.complete
+                |> Tea.mapMsg TreeMsg
+                |> Tea.mapModel (\root -> { model | root = root, context = newContext })
+                |> Tea.applyEffects applyCarlEffects
+                |> Tea.complete
 
         TreeMsg baseMsg ->
             tree.update model.context baseMsg model.root
-                |> Sprig.mapMsg TreeMsg
-                |> Sprig.mapModel (\root -> { model | root = root })
-                |> Sprig.applyEffects applyCarlEffects
-                |> Sprig.complete
+                |> Tea.mapMsg TreeMsg
+                |> Tea.mapModel (\root -> { model | root = root })
+                |> Tea.applyEffects applyCarlEffects
+                |> Tea.complete
 
 
 view : Model -> Browser.Document Msg

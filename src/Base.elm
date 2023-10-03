@@ -1,16 +1,17 @@
 module Base exposing (Effect(..), Model, Msg(..), branch)
 
+import Api
+import Context exposing (Context)
 import Header
 import Home
 import Html exposing (Html)
 import Html.Attributes
 import Login
 import Register
-import Sprig exposing (Sprig)
-import User exposing (User)
+import Tea exposing (Tea)
 
 
-branch : Sprig.Branch (Maybe User) Model Msg Effect
+branch : Context.Branch Model Msg Effect
 branch =
     { init = init
     , subscriptions = subscriptions
@@ -20,53 +21,53 @@ branch =
     }
 
 
-init : Sprig.Context (Maybe User) -> Sprig Model Msg Effect
+init : Context -> Tea Model Msg Effect
 init context =
     let
         ( header, headerEffects ) =
             Header.branch.init context
-                |> Sprig.extractModel
+                |> Tea.extractModel
 
         ( home, homeEffects ) =
             Home.branch.init context
-                |> Sprig.extractModel
+                |> Tea.extractModel
 
         ( login, loginEffects ) =
             Login.branch.init context
-                |> Sprig.extractModel
+                |> Tea.extractModel
 
         ( register, registerEffects ) =
             Register.branch.init context
-                |> Sprig.extractModel
+                |> Tea.extractModel
     in
     { header = header
     , home = home
     , login = login
     , register = register
     }
-        |> Sprig.save
-        |> Sprig.withChildEffects HeaderMsg applyHeaderEffects headerEffects
-        |> Sprig.withChildEffects HomeMsg applyHomeEffects homeEffects
-        |> Sprig.withChildEffects LoginMsg applyLoginEffects loginEffects
-        |> Sprig.withChildEffects RegisterMsg applyRegisterEffects registerEffects
+        |> Tea.save
+        |> Tea.withChildEffects HeaderMsg applyHeaderEffects headerEffects
+        |> Tea.withChildEffects HomeMsg applyHomeEffects homeEffects
+        |> Tea.withChildEffects LoginMsg applyLoginEffects loginEffects
+        |> Tea.withChildEffects RegisterMsg applyRegisterEffects registerEffects
 
 
-applyHeaderEffects : Header.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
+applyHeaderEffects : Header.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
 applyHeaderEffects _ sprig =
     sprig
 
 
-applyHomeEffects : Home.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
+applyHomeEffects : Home.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
 applyHomeEffects _ sprig =
     sprig
 
 
-applyLoginEffects : Login.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
+applyLoginEffects : Login.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
 applyLoginEffects _ sprig =
     sprig
 
 
-applyRegisterEffects : Register.Effect -> Sprig Model Msg Effect -> Sprig Model Msg Effect
+applyRegisterEffects : Register.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
 applyRegisterEffects _ sprig =
     sprig
 
@@ -79,7 +80,7 @@ type alias Model =
     }
 
 
-subscriptions : Sprig.Context (Maybe User) -> Model -> Sub Msg
+subscriptions : Context -> Model -> Sub Msg
 subscriptions context model =
     Sub.batch
         [ Header.branch.subscriptions context model.header
@@ -103,69 +104,69 @@ type Effect
     = Navigate (List String)
 
 
-update : Sprig.Context (Maybe User) -> Msg -> Model -> Sprig Model Msg Effect
+update : Context -> Msg -> Model -> Tea Model Msg Effect
 update context msg model =
     case msg of
         Login ->
             model
-                |> Sprig.save
-                |> Sprig.withEffect (Navigate [ "login" ])
+                |> Tea.save
+                |> Tea.withEffect (Navigate [ "login" ])
 
         HeaderMsg headerMsg ->
             Header.branch.update context headerMsg model.header
-                |> Sprig.mapMsg HeaderMsg
-                |> Sprig.mapModel (\header -> { model | header = header })
-                |> Sprig.applyEffects applyHeaderEffects
+                |> Tea.mapMsg HeaderMsg
+                |> Tea.mapModel (\header -> { model | header = header })
+                |> Tea.applyEffects applyHeaderEffects
 
         HomeMsg homeMsg ->
             Home.branch.update context homeMsg model.home
-                |> Sprig.mapMsg HomeMsg
-                |> Sprig.mapModel (\home -> { model | home = home })
-                |> Sprig.applyEffects applyHomeEffects
+                |> Tea.mapMsg HomeMsg
+                |> Tea.mapModel (\home -> { model | home = home })
+                |> Tea.applyEffects applyHomeEffects
 
         LoginMsg loginMsg ->
             Login.branch.update context loginMsg model.login
-                |> Sprig.mapMsg LoginMsg
-                |> Sprig.mapModel (\login -> { model | login = login })
-                |> Sprig.applyEffects applyLoginEffects
+                |> Tea.mapMsg LoginMsg
+                |> Tea.mapModel (\login -> { model | login = login })
+                |> Tea.applyEffects applyLoginEffects
 
         RegisterMsg registerMsg ->
             Register.branch.update context registerMsg model.register
-                |> Sprig.mapMsg RegisterMsg
-                |> Sprig.mapModel (\register -> { model | register = register })
-                |> Sprig.applyEffects applyRegisterEffects
+                |> Tea.mapMsg RegisterMsg
+                |> Tea.mapModel (\register -> { model | register = register })
+                |> Tea.applyEffects applyRegisterEffects
 
 
-urlChanged : Sprig.Context (Maybe User) -> Model -> Sprig Model Msg Effect
+urlChanged : Context -> Model -> Tea Model Msg Effect
 urlChanged context model =
     Header.branch.urlChanged context model.header
-        |> Sprig.mapMsg HeaderMsg
-        |> Sprig.mapModel (\header -> { model | header = header })
-        |> Sprig.applyEffects applyHeaderEffects
-        |> Sprig.andThen
+        |> Tea.mapMsg HeaderMsg
+        |> Tea.mapModel (\header -> { model | header = header })
+        |> Tea.applyEffects applyHeaderEffects
+        |> Tea.andThen
             (\m ->
                 Home.branch.urlChanged context m.home
-                    |> Sprig.mapMsg HomeMsg
-                    |> Sprig.mapModel (\home -> { m | home = home })
-                    |> Sprig.applyEffects applyHomeEffects
+                    |> Tea.mapMsg HomeMsg
+                    |> Tea.mapModel (\home -> { m | home = home })
+                    |> Tea.applyEffects applyHomeEffects
             )
-        |> Sprig.andThen
+        |> Tea.andThen
             (\m ->
                 Login.branch.urlChanged context m.login
-                    |> Sprig.mapMsg LoginMsg
-                    |> Sprig.mapModel (\login -> { m | login = login })
-                    |> Sprig.applyEffects applyLoginEffects
+                    |> Tea.mapMsg LoginMsg
+                    |> Tea.mapModel (\login -> { m | login = login })
+                    |> Tea.applyEffects applyLoginEffects
             )
-        |> Sprig.andThen
+        |> Tea.andThen
             (\m ->
                 Register.branch.urlChanged context m.register
-                    |> Sprig.mapMsg RegisterMsg
-                    |> Sprig.mapModel (\register -> { m | register = register })
-                    |> Sprig.applyEffects applyRegisterEffects
+                    |> Tea.mapMsg RegisterMsg
+                    |> Tea.mapModel (\register -> { m | register = register })
+                    |> Tea.applyEffects applyRegisterEffects
             )
 
 
-view : Sprig.Context (Maybe User) -> Model -> Html Msg
+view : Context -> Model -> Html Msg
 view context model =
     Html.div []
         [ Header.branch.view context model.header

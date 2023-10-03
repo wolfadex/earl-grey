@@ -6,16 +6,17 @@ module Login exposing
     , branch
     )
 
+import Api
+import Context exposing (Context)
 import Html exposing (Html)
 import Html.Attributes
 import Html.Events
-import Sprig exposing (Sprig)
-import User exposing (User)
+import Tea exposing (Tea)
 
 
-branch : Sprig.Route (Maybe User) InternalModel Msg Effect
+branch : Context.Route InternalModel Msg Effect
 branch =
-    Sprig.branch
+    Tea.branch
         { path = [ "login" ]
         }
         { init = init
@@ -27,7 +28,7 @@ branch =
 
 
 type alias Model =
-    Sprig.RouteModel InternalModel
+    Tea.RouteModel InternalModel
 
 
 type alias InternalModel =
@@ -40,13 +41,13 @@ type alias Effect =
     Never
 
 
-init : Sprig.Context (Maybe User) -> Sprig InternalModel Msg Effect
+init : Context -> Tea InternalModel Msg Effect
 init context =
     { email = "", password = "" }
-        |> Sprig.save
+        |> Tea.save
 
 
-subscriptions : Sprig.Context (Maybe User) -> InternalModel -> Sub Msg
+subscriptions : Context -> InternalModel -> Sub Msg
 subscriptions _ _ =
     Sub.none
 
@@ -59,29 +60,29 @@ type Msg
     | PasswordChanged String
 
 
-update : Sprig.Context (Maybe User) -> Msg -> InternalModel -> Sprig InternalModel Msg Effect
+update : Context -> Msg -> InternalModel -> Tea InternalModel Msg Effect
 update context msg model =
     case msg of
         EmailChanged email ->
             { model | email = email }
-                |> Sprig.save
+                |> Tea.save
 
         PasswordChanged password ->
             { model | password = password }
-                |> Sprig.save
+                |> Tea.save
 
         Login ->
             model
-                |> Sprig.save
+                |> Tea.save
 
 
-urlChanged : Sprig.Context (Maybe User) -> InternalModel -> Sprig InternalModel Msg Effect
+urlChanged : Context -> InternalModel -> Tea InternalModel Msg Effect
 urlChanged _ model =
     model
-        |> Sprig.save
+        |> Tea.save
 
 
-view : Sprig.Context (Maybe User) -> InternalModel -> Html Msg
+view : Context -> InternalModel -> Html Msg
 view context model =
     Html.div [ Html.Attributes.class "auth-page" ]
         [ Html.div [ Html.Attributes.class "container page" ]

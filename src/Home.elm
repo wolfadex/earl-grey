@@ -1,15 +1,16 @@
 module Home exposing (Effect, InternalModel, Model, Msg, branch)
 
+import Api
+import Context exposing (Context)
 import Html exposing (Html)
 import Html.Attributes
 import Html.Events
-import Sprig exposing (Sprig)
-import User exposing (User)
+import Tea exposing (Tea)
 
 
-branch : Sprig.Route (Maybe User) InternalModel Msg Effect
+branch : Context.Route InternalModel Msg Effect
 branch =
-    Sprig.branch
+    Tea.branch
         { path = []
         }
         { init = init
@@ -20,11 +21,11 @@ branch =
         }
 
 
-init : Sprig.Context (Maybe User) -> Sprig InternalModel Msg Effect
+init : Context -> Tea InternalModel Msg Effect
 init context =
     { tag = Nothing
     }
-        |> Sprig.save
+        |> Tea.save
 
 
 type alias InternalModel =
@@ -33,7 +34,7 @@ type alias InternalModel =
 
 
 type alias Model =
-    Sprig.RouteModel InternalModel
+    Tea.RouteModel InternalModel
 
 
 type alias Effect =
@@ -44,25 +45,25 @@ type Msg
     = TagSelected String
 
 
-subscriptions : Sprig.Context (Maybe User) -> InternalModel -> Sub Msg
+subscriptions : Context -> InternalModel -> Sub Msg
 subscriptions _ _ =
     Sub.none
 
 
-update : Sprig.Context (Maybe User) -> Msg -> InternalModel -> Sprig InternalModel Msg Effect
+update : Context -> Msg -> InternalModel -> Tea InternalModel Msg Effect
 update _ msg model =
     case msg of
         TagSelected tag ->
             { model | tag = Just tag }
-                |> Sprig.save
+                |> Tea.save
 
 
-urlChanged : Sprig.Context (Maybe User) -> InternalModel -> Sprig InternalModel Msg Effect
+urlChanged : Context -> InternalModel -> Tea InternalModel Msg Effect
 urlChanged _ model =
-    Sprig.save model
+    Tea.save model
 
 
-view : Sprig.Context (Maybe User) -> InternalModel -> Html Msg
+view : Context -> InternalModel -> Html Msg
 view context model =
     Html.div [ Html.Attributes.class "home-page" ]
         [ viewBanner
@@ -80,7 +81,7 @@ viewBanner =
         ]
 
 
-viewPageContainer : Sprig.Context (Maybe User) -> InternalModel -> Html Msg
+viewPageContainer : Context -> InternalModel -> Html Msg
 viewPageContainer context model =
     Html.div [ Html.Attributes.class "container page" ]
         [ Html.div [ Html.Attributes.class "row" ]
@@ -97,11 +98,11 @@ viewPageContainer context model =
         ]
 
 
-viewFeedToggle : Sprig.Context (Maybe User) -> InternalModel -> Html msg
+viewFeedToggle : Context -> InternalModel -> Html msg
 viewFeedToggle context model =
     Html.div [ Html.Attributes.class "feed-toggle" ]
         [ Html.ul [ Html.Attributes.class "nav nav-pills outline-active" ]
-            [ case Sprig.flags context of
+            [ case Tea.flags context of
                 Nothing ->
                     Html.text ""
 

@@ -6,16 +6,18 @@ module Register exposing
     , branch
     )
 
+import Api
+import Context exposing (Context)
 import Html exposing (Html)
 import Html.Attributes
 import Html.Events
-import Sprig exposing (Sprig)
-import User exposing (User)
+import Http
+import Tea exposing (Tea)
 
 
-branch : Sprig.Route (Maybe User) InternalModel Msg Effect
+branch : Context.Route InternalModel Msg Effect
 branch =
-    Sprig.branch
+    Tea.branch
         { path = [ "register" ]
         }
         { init = init
@@ -27,7 +29,7 @@ branch =
 
 
 type alias Model =
-    Sprig.RouteModel InternalModel
+    Tea.RouteModel InternalModel
 
 
 type alias InternalModel =
@@ -41,16 +43,16 @@ type alias Effect =
     Never
 
 
-init : Sprig.Context (Maybe User) -> Sprig InternalModel Msg Effect
+init : Context -> Tea InternalModel Msg Effect
 init context =
     { username = ""
     , email = ""
     , password = ""
     }
-        |> Sprig.save
+        |> Tea.save
 
 
-subscriptions : Sprig.Context (Maybe User) -> InternalModel -> Sub Msg
+subscriptions : Context -> InternalModel -> Sub Msg
 subscriptions _ _ =
     Sub.none
 
@@ -62,35 +64,54 @@ type Msg
       -- | LoginSuccess User
       -- | LoginFailure String
     | Register
+    | Registered (Result Http.Error Api.UserResponse)
 
 
-update : Sprig.Context (Maybe User) -> Msg -> InternalModel -> Sprig InternalModel Msg Effect
+update : Context -> Msg -> InternalModel -> Tea InternalModel Msg Effect
 update context msg model =
     case msg of
         UsernameChanged username ->
             { model | username = username }
-                |> Sprig.save
+                |> Tea.save
 
         EmailChanged email ->
             { model | email = email }
-                |> Sprig.save
+                |> Tea.save
 
         PasswordChanged password ->
             { model | password = password }
-                |> Sprig.save
+                |> Tea.save
 
         Register ->
             model
-                |> Sprig.save
+                |> Tea.save
+                |> Tea.withCmd
+                    (Api.createUser
+                        { body =
+                            { user =
+                                { email = model.email
+                                , password = model.password
+                                , username = model.username
+                                }
+                            }
+                        , toMsg = Registered
+                        }
+                    )
+
+        Registered (Err err) ->
+            Debug.todo (Debug.toString err)
+
+        Registered (Ok { user }) ->
+            Debug.todo ""
 
 
-urlChanged : Sprig.Context (Maybe User) -> InternalModel -> Sprig InternalModel Msg Effect
+urlChanged : Context -> InternalModel -> Tea InternalModel Msg Effect
 urlChanged _ model =
     model
-        |> Sprig.save
+        |> Tea.save
 
 
-view : Sprig.Context (Maybe User) -> InternalModel -> Html Msg
+view : Context -> InternalModel -> Html Msg
 view context model =
     Html.div [ Html.Attributes.class "auth-page" ]
         [ Html.div [ Html.Attributes.class "container page" ]
