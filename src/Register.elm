@@ -12,7 +12,7 @@ import Html exposing (Html)
 import Html.Attributes
 import Html.Events
 import Http
-import Tea exposing (Tea)
+import Tea
 
 
 type alias RegisterTea =
@@ -49,7 +49,7 @@ type alias Effect =
 
 
 init : Context -> RegisterTea
-init context =
+init _ =
     { username = ""
     , email = ""
     , password = ""
@@ -67,14 +67,12 @@ type Msg
     = UsernameChanged String
     | EmailChanged String
     | PasswordChanged String
-      -- | LoginSuccess User
-      -- | LoginFailure String
     | Register
     | Registered (Result Http.Error Api.UserResponse)
 
 
 update : Context -> Msg -> InternalModel -> RegisterTea
-update context msg model =
+update _ msg model =
     case msg of
         UsernameChanged username ->
             { model | username = username }
@@ -124,7 +122,7 @@ urlChanged _ model =
 
 
 view : Context -> InternalModel -> Html Msg
-view context model =
+view _ model =
     Html.div [ Html.Attributes.class "auth-page" ]
         [ Html.div [ Html.Attributes.class "container page" ]
             [ Html.div [ Html.Attributes.class "row" ]

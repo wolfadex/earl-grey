@@ -175,7 +175,7 @@ plant options =
                 RootMsg msg_ ->
                     let
                         (Tea brch) =
-                            options.root.update (Context model.context) (Debug.log "root msg" msg_) model.rootModel
+                            options.root.update (Context model.context) msg_ model.rootModel
                                 |> mapMsg RootMsg
                     in
                     List.foldl

@@ -12,7 +12,7 @@ import Html exposing (Html)
 import Html.Attributes
 import Html.Events
 import Http
-import Tea exposing (Tea)
+import Tea
 
 
 type alias LoginTea =
@@ -48,7 +48,7 @@ type alias Effect =
 
 
 init : Context -> LoginTea
-init context =
+init _ =
     { email = ""
     , password = ""
     , errors = []
@@ -69,7 +69,7 @@ type Msg
 
 
 update : Context -> Msg -> InternalModel -> LoginTea
-update context msg model =
+update _ msg model =
     case msg of
         EmailChanged email ->
             { model | email = email }
@@ -89,7 +89,7 @@ update context msg model =
                         }
                     )
 
-        LoginResponded (Err err) ->
+        LoginResponded (Err _) ->
             { model
                 | errors = [ "Login failed" ]
             }
@@ -97,7 +97,6 @@ update context msg model =
 
         LoginResponded (Ok { user }) ->
             model
-                |> Debug.log "logged in"
                 |> Tea.save
                 |> Tea.setFlags (Just user)
                 |> Tea.navigate "/"
@@ -110,7 +109,7 @@ urlChanged _ model =
 
 
 view : Context -> InternalModel -> Html Msg
-view context model =
+view _ model =
     Html.div [ Html.Attributes.class "auth-page" ]
         [ Html.div [ Html.Attributes.class "container page" ]
             [ Html.div [ Html.Attributes.class "row" ]

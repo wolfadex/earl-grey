@@ -1,12 +1,11 @@
 module Header exposing (Effect(..), Model, Msg(..), branch)
 
-import Api
 import AppUrl
 import Context exposing (Context)
 import Dict
 import Html exposing (Html)
 import Html.Attributes
-import Tea exposing (Tea)
+import Tea
 
 
 type alias HeaderTea =
@@ -39,7 +38,7 @@ subscriptions _ _ =
 
 
 type Msg
-    = Login
+    = Msg Never
 
 
 type Effect
@@ -47,12 +46,10 @@ type Effect
 
 
 update : Context -> Msg -> Model -> HeaderTea
-update _ msg model =
-    case msg of
-        Login ->
-            model
-                |> Tea.save
-                |> Tea.withEffect Navigate
+update _ _ model =
+    model
+        |> Tea.save
+        |> Tea.withEffect Navigate
 
 
 urlChanged : Context -> Model -> HeaderTea

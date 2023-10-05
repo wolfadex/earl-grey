@@ -1,6 +1,5 @@
-module Base exposing (Effect(..), Model, Msg(..), branch)
+module Base exposing (Effect, Model, Msg(..), branch)
 
-import Api
 import Context exposing (Context)
 import Header
 import Home
@@ -8,7 +7,7 @@ import Html exposing (Html)
 import Html.Attributes
 import Login
 import Register
-import Tea exposing (Tea)
+import Tea
 
 
 type alias BaseTea =
@@ -99,25 +98,19 @@ subscriptions context model =
 
 
 type Msg
-    = Login
-    | HeaderMsg Header.Msg
+    = HeaderMsg Header.Msg
     | HomeMsg Home.Msg
     | LoginMsg Login.Msg
     | RegisterMsg Register.Msg
 
 
-type Effect
-    = Navigate (List String)
+type alias Effect =
+    Never
 
 
 update : Context -> Msg -> Model -> BaseTea
 update context msg model =
     case msg of
-        Login ->
-            model
-                |> Tea.save
-                |> Tea.withEffect (Navigate [ "login" ])
-
         HeaderMsg headerMsg ->
             Header.branch.update context headerMsg model.header
                 |> Tea.mapMsg HeaderMsg

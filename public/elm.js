@@ -608,7 +608,7 @@ ${variant}`;
   var VERSION = "1.2.0-beta.3";
   var TARGET_NAME = "My target name";
   var INITIAL_ELM_COMPILED_TIMESTAMP = Number(
-    "1696546840406"
+    "1696547122262"
   );
   var ORIGINAL_COMPILATION_MODE = "debug";
   var ORIGINAL_BROWSER_UI_POSITION = "BottomLeft";
@@ -14024,7 +14024,7 @@ var $author$project$Tea$withEffect = F2(
 				}));
 	});
 var $author$project$Header$update = F3(
-	function (_v0, msg, model) {
+	function (_v0, _v1, model) {
 		return A2(
 			$author$project$Tea$withEffect,
 			$author$project$Header$Navigate,
@@ -14576,7 +14576,7 @@ var $author$project$Tea$branch = F2(
 				})
 		};
 	});
-var $author$project$Home$init = function (context) {
+var $author$project$Home$init = function (_v0) {
 	return $author$project$Tea$save(
 		{tag: $elm$core$Maybe$Nothing});
 };
@@ -15033,7 +15033,7 @@ var $author$project$Home$branch = A2(
 	$author$project$Tea$branch,
 	{path: _List_Nil},
 	{init: $author$project$Home$init, subscriptions: $author$project$Home$subscriptions, update: $author$project$Home$update, urlChanged: $author$project$Home$urlChanged, view: $author$project$Home$view});
-var $author$project$Login$init = function (context) {
+var $author$project$Login$init = function (_v0) {
 	return $author$project$Tea$save(
 		{email: '', errors: _List_Nil, password: ''});
 };
@@ -15044,7 +15044,6 @@ var $author$project$Login$subscriptions = F2(
 var $author$project$Login$LoginResponded = function (a) {
 	return {$: 'LoginResponded', a: a};
 };
-var $elm$core$Debug$log = _Debug_log;
 var $elm_community$json_extra$Json$Decode$Extra$andMap = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
@@ -15429,7 +15428,7 @@ var $author$project$Tea$withCmd = F2(
 				}));
 	});
 var $author$project$Login$update = F3(
-	function (context, msg, model) {
+	function (_v0, msg, model) {
 		switch (msg.$) {
 			case 'EmailChanged':
 				var email = msg.a;
@@ -15456,7 +15455,6 @@ var $author$project$Login$update = F3(
 					$author$project$Tea$save(model));
 			default:
 				if (msg.a.$ === 'Err') {
-					var err = msg.a.a;
 					return $author$project$Tea$save(
 						_Utils_update(
 							model,
@@ -15472,8 +15470,7 @@ var $author$project$Login$update = F3(
 						A2(
 							$author$project$Tea$setFlags,
 							$elm$core$Maybe$Just(user),
-							$author$project$Tea$save(
-								A2($elm$core$Debug$log, 'logged in', model))));
+							$author$project$Tea$save(model)));
 				}
 		}
 	});
@@ -15514,7 +15511,7 @@ var $elm$html$Html$Events$onSubmit = function (msg) {
 };
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $author$project$Login$view = F2(
-	function (context, model) {
+	function (_v0, model) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -15666,7 +15663,7 @@ var $author$project$Login$branch = A2(
 			['login'])
 	},
 	{init: $author$project$Login$init, subscriptions: $author$project$Login$subscriptions, update: $author$project$Login$update, urlChanged: $author$project$Login$urlChanged, view: $author$project$Login$view});
-var $author$project$Register$init = function (context) {
+var $author$project$Register$init = function (_v0) {
 	return $author$project$Tea$save(
 		{email: '', errors: _List_Nil, password: '', username: ''});
 };
@@ -15716,7 +15713,7 @@ var $author$project$Api$createUser = function (config) {
 };
 var $elm$core$Debug$toString = _Debug_toString;
 var $author$project$Register$update = F3(
-	function (context, msg, model) {
+	function (_v0, msg, model) {
 		switch (msg.$) {
 			case 'UsernameChanged':
 				var username = msg.a;
@@ -15786,7 +15783,7 @@ var $author$project$Register$UsernameChanged = function (a) {
 	return {$: 'UsernameChanged', a: a};
 };
 var $author$project$Register$view = F2(
-	function (context, model) {
+	function (_v0, model) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -16052,9 +16049,6 @@ var $author$project$Base$subscriptions = F2(
 					A2($author$project$Register$branch.subscriptions, context, model.register))
 				]));
 	});
-var $author$project$Base$Navigate = function (a) {
-	return {$: 'Navigate', a: a};
-};
 var $author$project$Tea$applyEffects = F2(
 	function (fn, _v0) {
 		var update = _v0.a;
@@ -16096,13 +16090,6 @@ var $author$project$Tea$mapMsg = F2(
 var $author$project$Base$update = F3(
 	function (context, msg, model) {
 		switch (msg.$) {
-			case 'Login':
-				return A2(
-					$author$project$Tea$withEffect,
-					$author$project$Base$Navigate(
-						_List_fromArray(
-							['login'])),
-					$author$project$Tea$save(model));
 			case 'HeaderMsg':
 				var headerMsg = msg.a;
 				return A2(
@@ -16654,7 +16641,7 @@ var $author$project$Tea$plant = function (options) {
 							A3(
 								options.root.update,
 								$author$project$Tea$Context(model.context),
-								A2($elm$core$Debug$log, 'root msg', msg_),
+								msg_,
 								model.rootModel));
 						var brch = _v8.a;
 						return A2(
@@ -16726,8 +16713,8 @@ var $author$project$Main$main = $elm$browser$Browser$application(
 				$elm$core$Result$toMaybe),
 			root: $author$project$Base$branch,
 			rootEffect: F2(
-				function (eff, model) {
+				function (_v0, model) {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				})
 		}));
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Tea.Msg Base.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.User":{"args":[],"type":"{ bio : Maybe.Maybe String.String, email : String.String, image : String.String, token : String.String, username : String.String }"},"Api.UserResponse":{"args":[],"type":"{ user : Api.User }"}},"unions":{"Base.Msg":{"args":[],"tags":{"Login":[],"HeaderMsg":["Header.Msg"],"HomeMsg":["Home.Msg"],"LoginMsg":["Login.Msg"],"RegisterMsg":["Register.Msg"]}},"Tea.Msg":{"args":["msg"],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"RootMsg":["msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Header.Msg":{"args":[],"tags":{"Login":[]}},"Home.Msg":{"args":[],"tags":{"TagSelected":["String.String"]}},"Login.Msg":{"args":[],"tags":{"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Login":[],"LoginResponded":["Result.Result Http.Error Api.UserResponse"]}},"Register.Msg":{"args":[],"tags":{"UsernameChanged":["String.String"],"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Register":[],"Registered":["Result.Result Http.Error Api.UserResponse"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Tea.Msg Base.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.User":{"args":[],"type":"{ bio : Maybe.Maybe String.String, email : String.String, image : String.String, token : String.String, username : String.String }"},"Api.UserResponse":{"args":[],"type":"{ user : Api.User }"}},"unions":{"Base.Msg":{"args":[],"tags":{"HeaderMsg":["Header.Msg"],"HomeMsg":["Home.Msg"],"LoginMsg":["Login.Msg"],"RegisterMsg":["Register.Msg"]}},"Tea.Msg":{"args":["msg"],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"RootMsg":["msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Header.Msg":{"args":[],"tags":{"Msg":["Basics.Never"]}},"Home.Msg":{"args":[],"tags":{"TagSelected":["String.String"]}},"Login.Msg":{"args":[],"tags":{"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Login":[],"LoginResponded":["Result.Result Http.Error Api.UserResponse"]}},"Register.Msg":{"args":[],"tags":{"UsernameChanged":["String.String"],"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Register":[],"Registered":["Result.Result Http.Error Api.UserResponse"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));

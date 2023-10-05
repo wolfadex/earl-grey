@@ -1,11 +1,10 @@
 module Home exposing (Effect, InternalModel, Model, Msg, branch)
 
-import Api
 import Context exposing (Context)
 import Html exposing (Html)
 import Html.Attributes
 import Html.Events
-import Tea exposing (Tea)
+import Tea
 
 
 type alias HomeTea =
@@ -26,7 +25,7 @@ branch =
 
 
 init : Context -> HomeTea
-init context =
+init _ =
     { tag = Nothing
     }
         |> Tea.save
