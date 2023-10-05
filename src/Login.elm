@@ -12,6 +12,7 @@ import Html exposing (Html)
 import Html.Attributes
 import Html.Events
 import Http
+import Port
 import Tea
 
 
@@ -99,6 +100,7 @@ update _ msg model =
             model
                 |> Tea.save
                 |> Tea.setFlags (Just user)
+                |> Tea.withCmd (Port.storeUser user)
                 |> Tea.navigate "/"
 
 

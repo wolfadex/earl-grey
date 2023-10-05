@@ -608,7 +608,7 @@ ${variant}`;
   var VERSION = "1.2.0-beta.3";
   var TARGET_NAME = "My target name";
   var INITIAL_ELM_COMPILED_TIMESTAMP = Number(
-    "1696547226901"
+    "1696548004985"
   );
   var ORIGINAL_COMPILATION_MODE = "debug";
   var ORIGINAL_BROWSER_UI_POSITION = "BottomLeft";
@@ -15417,6 +15417,69 @@ var $author$project$Tea$setFlags = F2(
 						update.internalEffects)
 				}));
 	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Api$encodeUser = function (rec) {
+	return $elm$json$Json$Encode$object(
+		A2(
+			$elm$core$List$filterMap,
+			$elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					A2(
+					$elm$core$Maybe$map,
+					function (mapUnpack) {
+						return _Utils_Tuple2(
+							'bio',
+							$elm$json$Json$Encode$string(mapUnpack));
+					},
+					rec.bio),
+					$elm$core$Maybe$Just(
+					_Utils_Tuple2(
+						'email',
+						$elm$json$Json$Encode$string(rec.email))),
+					$elm$core$Maybe$Just(
+					_Utils_Tuple2(
+						'image',
+						$elm$json$Json$Encode$string(rec.image))),
+					$elm$core$Maybe$Just(
+					_Utils_Tuple2(
+						'token',
+						$elm$json$Json$Encode$string(rec.token))),
+					$elm$core$Maybe$Just(
+					_Utils_Tuple2(
+						'username',
+						$elm$json$Json$Encode$string(rec.username)))
+				])));
+};
+var $author$project$Port$fromElm = _Platform_outgoingPort(
+	'fromElm',
+	function ($) {
+		var a = $.a;
+		var b = $.b;
+		return A2(
+			$elm$json$Json$Encode$list,
+			$elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					$elm$json$Json$Encode$string(a),
+					$elm$core$Basics$identity(b)
+				]));
+	});
+var $author$project$Port$storeUser = function (user) {
+	return $author$project$Port$fromElm(
+		_Utils_Tuple2(
+			'STORE_USER',
+			$author$project$Api$encodeUser(user)));
+};
 var $author$project$Tea$withCmd = F2(
 	function (cmd, _v0) {
 		var update = _v0.a;
@@ -15468,9 +15531,12 @@ var $author$project$Login$update = F3(
 						$author$project$Tea$navigate,
 						'/',
 						A2(
-							$author$project$Tea$setFlags,
-							$elm$core$Maybe$Just(user),
-							$author$project$Tea$save(model)));
+							$author$project$Tea$withCmd,
+							$author$project$Port$storeUser(user),
+							A2(
+								$author$project$Tea$setFlags,
+								$elm$core$Maybe$Just(user),
+								$author$project$Tea$save(model))));
 				}
 		}
 	});
@@ -16390,16 +16456,6 @@ var $author$project$Tea$applyInternalEffects = F2(
 						}),
 					_Utils_Tuple2(initialModel, _List_Nil),
 					effects)));
-	});
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
 	});
 var $elm$url$Url$percentDecode = _Url_percentDecode;
 var $lydell$elm_app_url$AppUrl$percentDecode = function (string) {

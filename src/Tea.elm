@@ -300,7 +300,7 @@ flags (Context context) =
 urlChanged : Url -> Context flags -> Context flags
 urlChanged url (Context context) =
     let
-        contextUrl : AppUrln
+        contextUrl : AppUrl
         contextUrl =
             AppUrl.fromUrl url
     in

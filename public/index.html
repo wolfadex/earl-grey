@@ -160,7 +160,19 @@
     <script src="elm.js"></script>
     <script>
       var flags = localStorage.getItem("store");
-      var app = Elm.Main.init({ flags: flags });
+
+      var app = Elm.Main.init({ flags: JSON.parse(flags) });
+
+      app.ports.fromElm.subscribe(function ([msg, data]) {
+        switch (msg) {
+          case "STORE_USER":
+            localStorage.setItem("store", JSON.stringify(data));
+            break;
+          default:
+            console.log("Unknown message from Elm", msg, data);
+            break;
+        }
+      });
     </script>
   </body>
 </html>
