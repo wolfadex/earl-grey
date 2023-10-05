@@ -15,6 +15,10 @@ import Http
 import Tea exposing (Tea)
 
 
+type alias RegisterTea =
+    Context.MyTea InternalModel Msg Effect
+
+
 branch : Context.Route InternalModel Msg Effect
 branch =
     Tea.branch
@@ -36,6 +40,7 @@ type alias InternalModel =
     { username : String
     , email : String
     , password : String
+    , errors : List String
     }
 
 
@@ -43,11 +48,12 @@ type alias Effect =
     Never
 
 
-init : Context -> Tea InternalModel Msg Effect
+init : Context -> RegisterTea
 init context =
     { username = ""
     , email = ""
     , password = ""
+    , errors = []
     }
         |> Tea.save
 
@@ -67,7 +73,7 @@ type Msg
     | Registered (Result Http.Error Api.UserResponse)
 
 
-update : Context -> Msg -> InternalModel -> Tea InternalModel Msg Effect
+update : Context -> Msg -> InternalModel -> RegisterTea
 update context msg model =
     case msg of
         UsernameChanged username ->
@@ -99,13 +105,19 @@ update context msg model =
                     )
 
         Registered (Err err) ->
-            Debug.todo (Debug.toString err)
+            { model
+                | errors = [ Debug.toString err ]
+            }
+                |> Tea.save
 
         Registered (Ok { user }) ->
-            Debug.todo ""
+            model
+                |> Tea.save
+                |> Tea.setFlags (Just user)
+                |> Tea.navigate "/"
 
 
-urlChanged : Context -> InternalModel -> Tea InternalModel Msg Effect
+urlChanged : Context -> InternalModel -> RegisterTea
 urlChanged _ model =
     model
         |> Tea.save
@@ -121,9 +133,13 @@ view context model =
                     , Html.p [ Html.Attributes.class "text-xs-center" ]
                         [ Html.a [ Html.Attributes.href "/login" ] [ Html.text "Have an account?" ]
                         ]
-
-                    -- , Html.ul [ Html.Attributes.class "error-messages" ]
-                    --     [ Html.li [] [ Html.text "That email is already taken" ] ]
+                    , Html.ul [ Html.Attributes.class "error-messages" ]
+                        (List.map
+                            (\error ->
+                                Html.li [] [ Html.text error ]
+                            )
+                            model.errors
+                        )
                     , Html.form [ Html.Events.onSubmit Register ]
                         [ Html.fieldset [ Html.Attributes.class "form-group" ]
                             [ Html.input

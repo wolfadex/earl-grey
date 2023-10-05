@@ -2,11 +2,12 @@ module Context exposing
     ( Branch
     , Context
     , Flags
+    , MyTea
     , Route
     )
 
 import Api
-import Tea
+import Tea exposing (Tea)
 
 
 type alias Context =
@@ -23,3 +24,7 @@ type alias Branch model msg effect =
 
 type alias Route model msg effect =
     Tea.Route Flags model msg effect
+
+
+type alias MyTea model msg effect =
+    Tea Flags model msg effect

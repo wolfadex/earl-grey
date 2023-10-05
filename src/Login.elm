@@ -11,7 +11,12 @@ import Context exposing (Context)
 import Html exposing (Html)
 import Html.Attributes
 import Html.Events
+import Http
 import Tea exposing (Tea)
+
+
+type alias LoginTea =
+    Context.MyTea InternalModel Msg Effect
 
 
 branch : Context.Route InternalModel Msg Effect
@@ -34,6 +39,7 @@ type alias Model =
 type alias InternalModel =
     { email : String
     , password : String
+    , errors : List String
     }
 
 
@@ -41,9 +47,12 @@ type alias Effect =
     Never
 
 
-init : Context -> Tea InternalModel Msg Effect
+init : Context -> LoginTea
 init context =
-    { email = "", password = "" }
+    { email = ""
+    , password = ""
+    , errors = []
+    }
         |> Tea.save
 
 
@@ -54,13 +63,12 @@ subscriptions _ _ =
 
 type Msg
     = EmailChanged String
-    | Login
-      -- | LoginSuccess User
-      -- | LoginFailure String
     | PasswordChanged String
+    | Login
+    | LoginResponded (Result Http.Error Api.UserResponse)
 
 
-update : Context -> Msg -> InternalModel -> Tea InternalModel Msg Effect
+update : Context -> Msg -> InternalModel -> LoginTea
 update context msg model =
     case msg of
         EmailChanged email ->
@@ -74,9 +82,28 @@ update context msg model =
         Login ->
             model
                 |> Tea.save
+                |> Tea.withCmd
+                    (Api.login
+                        { body = { user = { email = model.email, password = model.password } }
+                        , toMsg = LoginResponded
+                        }
+                    )
+
+        LoginResponded (Err err) ->
+            { model
+                | errors = [ "Login failed" ]
+            }
+                |> Tea.save
+
+        LoginResponded (Ok { user }) ->
+            model
+                |> Debug.log "logged in"
+                |> Tea.save
+                |> Tea.setFlags (Just user)
+                |> Tea.navigate "/"
 
 
-urlChanged : Context -> InternalModel -> Tea InternalModel Msg Effect
+urlChanged : Context -> InternalModel -> LoginTea
 urlChanged _ model =
     model
         |> Tea.save
@@ -92,9 +119,9 @@ view context model =
                     , Html.p [ Html.Attributes.class "text-xs-center" ]
                         [ Html.a [ Html.Attributes.href "/register" ] [ Html.text "Need an account?" ]
                         ]
-
-                    -- , Html.ul [ Html.Attributes.class "error-messages" ]
-                    --     [ Html.li [] [ Html.text "That email is already taken" ] ]
+                    , model.errors
+                        |> List.map (\error -> Html.li [] [ Html.text error ])
+                        |> Html.ul [ Html.Attributes.class "error-messages" ]
                     , Html.form [ Html.Events.onSubmit Login ]
                         [ Html.fieldset [ Html.Attributes.class "form-group" ]
                             [ Html.input

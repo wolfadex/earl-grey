@@ -11,6 +11,10 @@ import Register
 import Tea exposing (Tea)
 
 
+type alias BaseTea =
+    Context.MyTea Model Msg Effect
+
+
 branch : Context.Branch Model Msg Effect
 branch =
     { init = init
@@ -21,7 +25,7 @@ branch =
     }
 
 
-init : Context -> Tea Model Msg Effect
+init : Context -> BaseTea
 init context =
     let
         ( header, headerEffects ) =
@@ -52,22 +56,22 @@ init context =
         |> Tea.withChildEffects RegisterMsg applyRegisterEffects registerEffects
 
 
-applyHeaderEffects : Header.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
+applyHeaderEffects : Header.Effect -> BaseTea -> BaseTea
 applyHeaderEffects _ sprig =
     sprig
 
 
-applyHomeEffects : Home.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
+applyHomeEffects : Home.Effect -> BaseTea -> BaseTea
 applyHomeEffects _ sprig =
     sprig
 
 
-applyLoginEffects : Login.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
+applyLoginEffects : Login.Effect -> BaseTea -> BaseTea
 applyLoginEffects _ sprig =
     sprig
 
 
-applyRegisterEffects : Register.Effect -> Tea Model Msg Effect -> Tea Model Msg Effect
+applyRegisterEffects : Register.Effect -> BaseTea -> BaseTea
 applyRegisterEffects _ sprig =
     sprig
 
@@ -89,6 +93,8 @@ subscriptions context model =
             |> Sub.map HomeMsg
         , Login.branch.subscriptions context model.login
             |> Sub.map LoginMsg
+        , Register.branch.subscriptions context model.register
+            |> Sub.map RegisterMsg
         ]
 
 
@@ -104,7 +110,7 @@ type Effect
     = Navigate (List String)
 
 
-update : Context -> Msg -> Model -> Tea Model Msg Effect
+update : Context -> Msg -> Model -> BaseTea
 update context msg model =
     case msg of
         Login ->
@@ -137,7 +143,7 @@ update context msg model =
                 |> Tea.applyEffects applyRegisterEffects
 
 
-urlChanged : Context -> Model -> Tea Model Msg Effect
+urlChanged : Context -> Model -> BaseTea
 urlChanged context model =
     Header.branch.urlChanged context model.header
         |> Tea.mapMsg HeaderMsg

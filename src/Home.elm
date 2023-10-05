@@ -8,6 +8,10 @@ import Html.Events
 import Tea exposing (Tea)
 
 
+type alias HomeTea =
+    Context.MyTea InternalModel Msg Effect
+
+
 branch : Context.Route InternalModel Msg Effect
 branch =
     Tea.branch
@@ -21,7 +25,7 @@ branch =
         }
 
 
-init : Context -> Tea InternalModel Msg Effect
+init : Context -> HomeTea
 init context =
     { tag = Nothing
     }
@@ -50,7 +54,7 @@ subscriptions _ _ =
     Sub.none
 
 
-update : Context -> Msg -> InternalModel -> Tea InternalModel Msg Effect
+update : Context -> Msg -> InternalModel -> HomeTea
 update _ msg model =
     case msg of
         TagSelected tag ->
@@ -58,7 +62,7 @@ update _ msg model =
                 |> Tea.save
 
 
-urlChanged : Context -> InternalModel -> Tea InternalModel Msg Effect
+urlChanged : Context -> InternalModel -> HomeTea
 urlChanged _ model =
     Tea.save model
 

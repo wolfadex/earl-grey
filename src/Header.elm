@@ -9,6 +9,10 @@ import Html.Attributes
 import Tea exposing (Tea)
 
 
+type alias HeaderTea =
+    Context.MyTea Model Msg Effect
+
+
 branch : Context.Branch Model Msg Effect
 branch =
     { init = init
@@ -19,7 +23,7 @@ branch =
     }
 
 
-init : Context -> Tea Model Msg Effect
+init : Context -> HeaderTea
 init _ =
     {}
         |> Tea.save
@@ -42,7 +46,7 @@ type Effect
     = Navigate
 
 
-update : Context -> Msg -> Model -> Tea Model Msg Effect
+update : Context -> Msg -> Model -> HeaderTea
 update _ msg model =
     case msg of
         Login ->
@@ -51,7 +55,7 @@ update _ msg model =
                 |> Tea.withEffect Navigate
 
 
-urlChanged : Context -> Model -> Tea Model Msg Effect
+urlChanged : Context -> Model -> HeaderTea
 urlChanged _ _ =
     {}
         |> Tea.save
@@ -83,7 +87,7 @@ view context _ =
                         { label =
                             Html.div []
                                 [ Html.i [ Html.Attributes.class "ion-compose" ] []
-                                , Html.text "&nbsp;New Article"
+                                , Html.text " New Article"
                                 ]
                         , path = [ "editor" ]
                         }
@@ -93,7 +97,7 @@ view context _ =
                         { label =
                             Html.div []
                                 [ Html.i [ Html.Attributes.class "ion-gear-a" ] []
-                                , Html.text "&nbsp;Settings"
+                                , Html.text " Settings"
                                 ]
                         , path = [ "settings" ]
                         }

@@ -608,7 +608,7 @@ ${variant}`;
   var VERSION = "1.2.0-beta.3";
   var TARGET_NAME = "My target name";
   var INITIAL_ELM_COMPILED_TIMESTAMP = Number(
-    "1696347172296"
+    "1696546840406"
   );
   var ORIGINAL_COMPILATION_MODE = "debug";
   var ORIGINAL_BROWSER_UI_POSITION = "BottomLeft";
@@ -3050,190 +3050,6 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEBUG mode. Follow the advice at https://elm-lang.org/0.19.1/optimize for better performance and smaller assets.');
 
 
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = $elm$core$Set$toList(x);
-		y = $elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = $elm$core$Dict$toList(x);
-		y = $elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = $elm$core$Dict$toList(x);
-		y = $elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? $elm$core$Basics$LT : n ? $elm$core$Basics$GT : $elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
-
-
-
 var _List_Nil_UNUSED = { $: 0 };
 var _List_Nil = { $: '[]' };
 
@@ -3759,6 +3575,190 @@ function _Debug_regionToString(region)
 		return 'on line ' + region.start.line;
 	}
 	return 'on lines ' + region.start.line + ' through ' + region.end.line;
+}
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = $elm$core$Set$toList(x);
+		y = $elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = $elm$core$Dict$toList(x);
+		y = $elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = $elm$core$Dict$toList(x);
+		y = $elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? $elm$core$Basics$LT : n ? $elm$core$Basics$GT : $elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
 }
 
 
@@ -8366,16 +8366,33 @@ function _Url_percentDecode(string)
 	{
 		return $elm$core$Maybe$Nothing;
 	}
-}var $author$project$Main$UrlChanged = function (a) {
-	return {$: 'UrlChanged', a: a};
-};
-var $author$project$Main$UrlRequested = function (a) {
-	return {$: 'UrlRequested', a: a};
-};
-var $elm$core$Basics$EQ = {$: 'EQ'};
-var $elm$core$Basics$GT = {$: 'GT'};
+}var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$LT = {$: 'LT'};
 var $elm$core$List$cons = _List_cons;
+var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var $elm$core$Array$foldr = F3(
+	function (func, baseCase, _v0) {
+		var tree = _v0.c;
+		var tail = _v0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3($elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3($elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			$elm$core$Elm$JsArray$foldr,
+			helper,
+			A3($elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
+	});
+var $elm$core$Array$toList = function (array) {
+	return A3($elm$core$Array$foldr, $elm$core$List$cons, _List_Nil, array);
+};
 var $elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -8428,30 +8445,11 @@ var $elm$core$Set$toList = function (_v0) {
 	var dict = _v0.a;
 	return $elm$core$Dict$keys(dict);
 };
-var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var $elm$core$Array$foldr = F3(
-	function (func, baseCase, _v0) {
-		var tree = _v0.c;
-		var tail = _v0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3($elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3($elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			$elm$core$Elm$JsArray$foldr,
-			helper,
-			A3($elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
+var $elm$core$Basics$GT = {$: 'GT'};
+var $elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
 	});
-var $elm$core$Array$toList = function (array) {
-	return A3($elm$core$Array$foldr, $elm$core$List$cons, _List_Nil, array);
-};
 var $elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };
@@ -8715,10 +8713,6 @@ var $elm$core$Array$Leaf = function (a) {
 };
 var $elm$core$Basics$apL = F2(
 	function (f, x) {
-		return f(x);
-	});
-var $elm$core$Basics$apR = F2(
-	function (x, f) {
 		return f(x);
 	});
 var $elm$core$Basics$eq = _Utils_equal;
@@ -13973,94 +13967,6 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Main$TreeMsg = function (a) {
-	return {$: 'TreeMsg', a: a};
-};
-var $author$project$Tea$Tea = function (a) {
-	return {$: 'Tea', a: a};
-};
-var $author$project$Tea$andThen = F2(
-	function (fn, _v0) {
-		var update1 = _v0.a;
-		var _v1 = fn(update1.model);
-		var update2 = _v1.a;
-		return $author$project$Tea$Tea(
-			{
-				cmds: _Utils_ap(update2.cmds, update1.cmds),
-				effects: update2.effects,
-				model: update2.model
-			});
-	});
-var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-var $author$project$Tea$save = function (model) {
-	return $author$project$Tea$Tea(
-		{cmds: _List_Nil, effects: _List_Nil, model: model});
-};
-var $author$project$Tea$withCmd = F2(
-	function (cmd, _v0) {
-		var update = _v0.a;
-		return $author$project$Tea$Tea(
-			_Utils_update(
-				update,
-				{
-					cmds: A2($elm$core$List$cons, cmd, update.cmds)
-				}));
-	});
-var $author$project$Main$applyCarlEffects = F2(
-	function (eff, sprig) {
-		var url = eff.a;
-		return A2(
-			$author$project$Tea$andThen,
-			function (model) {
-				return A2(
-					$author$project$Tea$withCmd,
-					A2(
-						$elm$browser$Browser$Navigation$pushUrl,
-						model.navKey,
-						A2($elm$core$String$join, '/', url)),
-					$author$project$Tea$save(model));
-			},
-			sprig);
-	});
-var $author$project$Tea$applyEffects = F2(
-	function (fn, _v0) {
-		var update = _v0.a;
-		return A3(
-			$elm$core$List$foldr,
-			fn,
-			$author$project$Tea$Tea(
-				{cmds: update.cmds, effects: _List_Nil, model: update.model}),
-			update.effects);
-	});
-var $author$project$Tea$complete = function (_v0) {
-	var update = _v0.a;
-	return _Utils_Tuple2(
-		update.model,
-		$elm$core$Platform$Cmd$batch(update.cmds));
-};
-var $author$project$Tea$mapModel = F2(
-	function (fn, _v0) {
-		var update = _v0.a;
-		return $author$project$Tea$Tea(
-			{
-				cmds: update.cmds,
-				effects: update.effects,
-				model: fn(update.model)
-			});
-	});
-var $author$project$Tea$mapMsg = F2(
-	function (fn, _v0) {
-		var update = _v0.a;
-		return $author$project$Tea$Tea(
-			{
-				cmds: A2(
-					$elm$core$List$map,
-					$elm$core$Platform$Cmd$map(fn),
-					update.cmds),
-				effects: update.effects,
-				model: update.model
-			});
-	});
 var $author$project$Base$HeaderMsg = function (a) {
 	return {$: 'HeaderMsg', a: a};
 };
@@ -14089,6 +13995,13 @@ var $author$project$Base$applyRegisterEffects = F2(
 	function (_v0, sprig) {
 		return sprig;
 	});
+var $author$project$Tea$Tea = function (a) {
+	return {$: 'Tea', a: a};
+};
+var $author$project$Tea$save = function (model) {
+	return $author$project$Tea$Tea(
+		{cmds: _List_Nil, effects: _List_Nil, internalEffects: _List_Nil, model: model});
+};
 var $author$project$Header$init = function (_v0) {
 	return $author$project$Tea$save(
 		{});
@@ -14516,7 +14429,7 @@ var $author$project$Header$view = F2(
 																		$elm$html$Html$Attributes$class('ion-compose')
 																	]),
 																_List_Nil),
-																$elm$html$Html$text('&nbsp;New Article')
+																$elm$html$Html$text(' New Article')
 															])),
 													path: _List_fromArray(
 														['editor'])
@@ -14541,7 +14454,7 @@ var $author$project$Header$view = F2(
 																		$elm$html$Html$Attributes$class('ion-gear-a')
 																	]),
 																_List_Nil),
-																$elm$html$Html$text('&nbsp;Settings')
+																$elm$html$Html$text(' Settings')
 															])),
 													path: _List_fromArray(
 														['settings'])
@@ -14578,6 +14491,17 @@ var $author$project$Header$view = F2(
 				]));
 	});
 var $author$project$Header$branch = {init: $author$project$Header$init, subscriptions: $author$project$Header$subscriptions, update: $author$project$Header$update, urlChanged: $author$project$Header$urlChanged, view: $author$project$Header$view};
+var $author$project$Tea$mapModel = F2(
+	function (fn, _v0) {
+		var update = _v0.a;
+		return $author$project$Tea$Tea(
+			{
+				cmds: update.cmds,
+				effects: update.effects,
+				internalEffects: update.internalEffects,
+				model: fn(update.model)
+			});
+	});
 var $author$project$Tea$relativePath = function (_v0) {
 	var context = _v0.a;
 	return context.relativePath;
@@ -15111,214 +15035,47 @@ var $author$project$Home$branch = A2(
 	{init: $author$project$Home$init, subscriptions: $author$project$Home$subscriptions, update: $author$project$Home$update, urlChanged: $author$project$Home$urlChanged, view: $author$project$Home$view});
 var $author$project$Login$init = function (context) {
 	return $author$project$Tea$save(
-		{email: '', password: ''});
+		{email: '', errors: _List_Nil, password: ''});
 };
 var $author$project$Login$subscriptions = F2(
 	function (_v0, _v1) {
 		return $elm$core$Platform$Sub$none;
 	});
-var $author$project$Login$update = F3(
-	function (context, msg, model) {
-		switch (msg.$) {
-			case 'EmailChanged':
-				var email = msg.a;
-				return $author$project$Tea$save(
-					_Utils_update(
-						model,
-						{email: email}));
-			case 'PasswordChanged':
-				var password = msg.a;
-				return $author$project$Tea$save(
-					_Utils_update(
-						model,
-						{password: password}));
-			default:
-				return $author$project$Tea$save(model);
-		}
-	});
-var $author$project$Login$urlChanged = F2(
-	function (_v0, model) {
-		return $author$project$Tea$save(model);
-	});
-var $author$project$Login$EmailChanged = function (a) {
-	return {$: 'EmailChanged', a: a};
+var $author$project$Login$LoginResponded = function (a) {
+	return {$: 'LoginResponded', a: a};
 };
-var $author$project$Login$Login = {$: 'Login'};
-var $author$project$Login$PasswordChanged = function (a) {
-	return {$: 'PasswordChanged', a: a};
-};
-var $elm$html$Html$fieldset = _VirtualDom_node('fieldset');
-var $elm$html$Html$form = _VirtualDom_node('form');
-var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
-	return _Utils_Tuple2(msg, true);
-};
-var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
-	return {$: 'MayPreventDefault', a: a};
-};
-var $elm$html$Html$Events$preventDefaultOn = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
-	});
-var $elm$html$Html$Events$onSubmit = function (msg) {
-	return A2(
-		$elm$html$Html$Events$preventDefaultOn,
-		'submit',
-		A2(
-			$elm$json$Json$Decode$map,
-			$elm$html$Html$Events$alwaysPreventDefault,
-			$elm$json$Json$Decode$succeed(msg)));
-};
-var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $author$project$Login$view = F2(
-	function (context, model) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('auth-page')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('container page')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('row')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('col-md-6 offset-md-3 col-xs-12')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$h1,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('text-xs-center')
-												]),
-											_List_fromArray(
-												[
-													$elm$html$Html$text('Sign in')
-												])),
-											A2(
-											$elm$html$Html$p,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('text-xs-center')
-												]),
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$a,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$href('/register')
-														]),
-													_List_fromArray(
-														[
-															$elm$html$Html$text('Need an account?')
-														]))
-												])),
-											A2(
-											$elm$html$Html$form,
-											_List_fromArray(
-												[
-													$elm$html$Html$Events$onSubmit($author$project$Login$Login)
-												]),
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$fieldset,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('form-group')
-														]),
-													_List_fromArray(
-														[
-															A2(
-															$elm$html$Html$input,
-															_List_fromArray(
-																[
-																	$elm$html$Html$Attributes$class('form-control form-control-lg'),
-																	$elm$html$Html$Attributes$type_('text'),
-																	$elm$html$Html$Attributes$placeholder('Email'),
-																	$elm$html$Html$Events$onInput($author$project$Login$EmailChanged),
-																	$elm$html$Html$Attributes$value(model.email)
-																]),
-															_List_Nil)
-														])),
-													A2(
-													$elm$html$Html$fieldset,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('form-group')
-														]),
-													_List_fromArray(
-														[
-															A2(
-															$elm$html$Html$input,
-															_List_fromArray(
-																[
-																	$elm$html$Html$Attributes$class('form-control form-control-lg'),
-																	$elm$html$Html$Attributes$type_('password'),
-																	$elm$html$Html$Attributes$placeholder('Password'),
-																	$elm$html$Html$Events$onInput($author$project$Login$PasswordChanged),
-																	$elm$html$Html$Attributes$value(model.password)
-																]),
-															_List_Nil)
-														])),
-													A2(
-													$elm$html$Html$button,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('btn btn-lg btn-primary pull-xs-right'),
-															$elm$html$Html$Attributes$type_('submit')
-														]),
-													_List_fromArray(
-														[
-															$elm$html$Html$text('Sign in')
-														]))
-												]))
-										]))
-								]))
-						]))
-				]));
-	});
-var $author$project$Login$branch = A2(
-	$author$project$Tea$branch,
-	{
-		path: _List_fromArray(
-			['login'])
-	},
-	{init: $author$project$Login$init, subscriptions: $author$project$Login$subscriptions, update: $author$project$Login$update, urlChanged: $author$project$Login$urlChanged, view: $author$project$Login$view});
-var $author$project$Register$init = function (context) {
-	return $author$project$Tea$save(
-		{email: '', password: '', username: ''});
-};
-var $author$project$Register$subscriptions = F2(
-	function (_v0, _v1) {
-		return $elm$core$Platform$Sub$none;
-	});
-var $author$project$Register$Registered = function (a) {
-	return {$: 'Registered', a: a};
-};
+var $elm$core$Debug$log = _Debug_log;
 var $elm_community$json_extra$Json$Decode$Extra$andMap = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $author$project$Api$decodeOptionalField = F2(
+	function (key, fieldDecoder) {
+		return A2(
+			$elm$json$Json$Decode$andThen,
+			function (andThenUnpack) {
+				return andThenUnpack ? A2(
+					$elm$json$Json$Decode$field,
+					key,
+					$elm$json$Json$Decode$oneOf(
+						_List_fromArray(
+							[
+								A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, fieldDecoder),
+								$elm$json$Json$Decode$null($elm$core$Maybe$Nothing)
+							]))) : $elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing);
+			},
+			$elm$json$Json$Decode$oneOf(
+				_List_fromArray(
+					[
+						A2(
+						$elm$json$Json$Decode$map,
+						function (_v0) {
+							return true;
+						},
+						A2($elm$json$Json$Decode$field, key, $elm$json$Json$Decode$value)),
+						$elm$json$Json$Decode$succeed(false)
+					])));
+	});
 var $author$project$Api$decodeUser = A2(
 	$elm_community$json_extra$Json$Decode$Extra$andMap,
 	A2($elm$json$Json$Decode$field, 'username', $elm$json$Json$Decode$string),
@@ -15333,7 +15090,7 @@ var $author$project$Api$decodeUser = A2(
 				A2($elm$json$Json$Decode$field, 'email', $elm$json$Json$Decode$string),
 				A2(
 					$elm_community$json_extra$Json$Decode$Extra$andMap,
-					A2($elm$json$Json$Decode$field, 'bio', $elm$json$Json$Decode$string),
+					A2($author$project$Api$decodeOptionalField, 'bio', $elm$json$Json$Decode$string),
 					$elm$json$Json$Decode$succeed(
 						F5(
 							function (bio, email, image, token, username) {
@@ -15346,7 +15103,7 @@ var $author$project$Api$decodeUserResponse = A2(
 		function (user) {
 			return {user: user};
 		}));
-var $author$project$Api$encodeNewUser = function (rec) {
+var $author$project$Api$encodeLoginUser = function (rec) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
@@ -15355,19 +15112,16 @@ var $author$project$Api$encodeNewUser = function (rec) {
 				$elm$json$Json$Encode$string(rec.email)),
 				_Utils_Tuple2(
 				'password',
-				$elm$json$Json$Encode$string(rec.password)),
-				_Utils_Tuple2(
-				'username',
-				$elm$json$Json$Encode$string(rec.username))
+				$elm$json$Json$Encode$string(rec.password))
 			]));
 };
-var $author$project$Api$encodeNewUserRequest = function (rec) {
+var $author$project$Api$encodeLoginUserRequest = function (rec) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
 				_Utils_Tuple2(
 				'user',
-				$author$project$Api$encodeNewUser(rec.user))
+				$author$project$Api$encodeLoginUser(rec.user))
 			]));
 };
 var $elm$http$Http$BadStatus_ = F2(
@@ -15619,6 +15373,334 @@ var $elm$http$Http$request = function (r) {
 		$elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
+var $author$project$Api$login = function (config) {
+	return $elm$http$Http$request(
+		{
+			body: $elm$http$Http$jsonBody(
+				$author$project$Api$encodeLoginUserRequest(config.body)),
+			expect: A2($elm$http$Http$expectJson, config.toMsg, $author$project$Api$decodeUserResponse),
+			headers: _List_Nil,
+			method: 'POST',
+			timeout: $elm$core$Maybe$Nothing,
+			tracker: $elm$core$Maybe$Nothing,
+			url: 'https://api.realworld.io/api/users/login'
+		});
+};
+var $author$project$Tea$Navigate = function (a) {
+	return {$: 'Navigate', a: a};
+};
+var $author$project$Tea$navigate = F2(
+	function (path, _v0) {
+		var update = _v0.a;
+		return $author$project$Tea$Tea(
+			_Utils_update(
+				update,
+				{
+					internalEffects: A2(
+						$elm$core$List$cons,
+						$author$project$Tea$Navigate(path),
+						update.internalEffects)
+				}));
+	});
+var $author$project$Tea$SetFlags = function (a) {
+	return {$: 'SetFlags', a: a};
+};
+var $author$project$Tea$setFlags = F2(
+	function (flags_, _v0) {
+		var update = _v0.a;
+		return $author$project$Tea$Tea(
+			_Utils_update(
+				update,
+				{
+					internalEffects: A2(
+						$elm$core$List$cons,
+						$author$project$Tea$SetFlags(flags_),
+						update.internalEffects)
+				}));
+	});
+var $author$project$Tea$withCmd = F2(
+	function (cmd, _v0) {
+		var update = _v0.a;
+		return $author$project$Tea$Tea(
+			_Utils_update(
+				update,
+				{
+					cmds: A2($elm$core$List$cons, cmd, update.cmds)
+				}));
+	});
+var $author$project$Login$update = F3(
+	function (context, msg, model) {
+		switch (msg.$) {
+			case 'EmailChanged':
+				var email = msg.a;
+				return $author$project$Tea$save(
+					_Utils_update(
+						model,
+						{email: email}));
+			case 'PasswordChanged':
+				var password = msg.a;
+				return $author$project$Tea$save(
+					_Utils_update(
+						model,
+						{password: password}));
+			case 'Login':
+				return A2(
+					$author$project$Tea$withCmd,
+					$author$project$Api$login(
+						{
+							body: {
+								user: {email: model.email, password: model.password}
+							},
+							toMsg: $author$project$Login$LoginResponded
+						}),
+					$author$project$Tea$save(model));
+			default:
+				if (msg.a.$ === 'Err') {
+					var err = msg.a.a;
+					return $author$project$Tea$save(
+						_Utils_update(
+							model,
+							{
+								errors: _List_fromArray(
+									['Login failed'])
+							}));
+				} else {
+					var user = msg.a.a.user;
+					return A2(
+						$author$project$Tea$navigate,
+						'/',
+						A2(
+							$author$project$Tea$setFlags,
+							$elm$core$Maybe$Just(user),
+							$author$project$Tea$save(
+								A2($elm$core$Debug$log, 'logged in', model))));
+				}
+		}
+	});
+var $author$project$Login$urlChanged = F2(
+	function (_v0, model) {
+		return $author$project$Tea$save(model);
+	});
+var $author$project$Login$EmailChanged = function (a) {
+	return {$: 'EmailChanged', a: a};
+};
+var $author$project$Login$Login = {$: 'Login'};
+var $author$project$Login$PasswordChanged = function (a) {
+	return {$: 'PasswordChanged', a: a};
+};
+var $elm$html$Html$fieldset = _VirtualDom_node('fieldset');
+var $elm$html$Html$form = _VirtualDom_node('form');
+var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $elm$html$Html$Events$onSubmit = function (msg) {
+	return A2(
+		$elm$html$Html$Events$preventDefaultOn,
+		'submit',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysPreventDefault,
+			$elm$json$Json$Decode$succeed(msg)));
+};
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $author$project$Login$view = F2(
+	function (context, model) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('auth-page')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('container page')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('row')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('col-md-6 offset-md-3 col-xs-12')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$h1,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('text-xs-center')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Sign in')
+												])),
+											A2(
+											$elm$html$Html$p,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('text-xs-center')
+												]),
+											_List_fromArray(
+												[
+													A2(
+													$elm$html$Html$a,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$href('/register')
+														]),
+													_List_fromArray(
+														[
+															$elm$html$Html$text('Need an account?')
+														]))
+												])),
+											A2(
+											$elm$html$Html$ul,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('error-messages')
+												]),
+											A2(
+												$elm$core$List$map,
+												function (error) {
+													return A2(
+														$elm$html$Html$li,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text(error)
+															]));
+												},
+												model.errors)),
+											A2(
+											$elm$html$Html$form,
+											_List_fromArray(
+												[
+													$elm$html$Html$Events$onSubmit($author$project$Login$Login)
+												]),
+											_List_fromArray(
+												[
+													A2(
+													$elm$html$Html$fieldset,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('form-group')
+														]),
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$input,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$class('form-control form-control-lg'),
+																	$elm$html$Html$Attributes$type_('text'),
+																	$elm$html$Html$Attributes$placeholder('Email'),
+																	$elm$html$Html$Events$onInput($author$project$Login$EmailChanged),
+																	$elm$html$Html$Attributes$value(model.email)
+																]),
+															_List_Nil)
+														])),
+													A2(
+													$elm$html$Html$fieldset,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('form-group')
+														]),
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$input,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$class('form-control form-control-lg'),
+																	$elm$html$Html$Attributes$type_('password'),
+																	$elm$html$Html$Attributes$placeholder('Password'),
+																	$elm$html$Html$Events$onInput($author$project$Login$PasswordChanged),
+																	$elm$html$Html$Attributes$value(model.password)
+																]),
+															_List_Nil)
+														])),
+													A2(
+													$elm$html$Html$button,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('btn btn-lg btn-primary pull-xs-right'),
+															$elm$html$Html$Attributes$type_('submit')
+														]),
+													_List_fromArray(
+														[
+															$elm$html$Html$text('Sign in')
+														]))
+												]))
+										]))
+								]))
+						]))
+				]));
+	});
+var $author$project$Login$branch = A2(
+	$author$project$Tea$branch,
+	{
+		path: _List_fromArray(
+			['login'])
+	},
+	{init: $author$project$Login$init, subscriptions: $author$project$Login$subscriptions, update: $author$project$Login$update, urlChanged: $author$project$Login$urlChanged, view: $author$project$Login$view});
+var $author$project$Register$init = function (context) {
+	return $author$project$Tea$save(
+		{email: '', errors: _List_Nil, password: '', username: ''});
+};
+var $author$project$Register$subscriptions = F2(
+	function (_v0, _v1) {
+		return $elm$core$Platform$Sub$none;
+	});
+var $author$project$Register$Registered = function (a) {
+	return {$: 'Registered', a: a};
+};
+var $author$project$Api$encodeNewUser = function (rec) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'email',
+				$elm$json$Json$Encode$string(rec.email)),
+				_Utils_Tuple2(
+				'password',
+				$elm$json$Json$Encode$string(rec.password)),
+				_Utils_Tuple2(
+				'username',
+				$elm$json$Json$Encode$string(rec.username))
+			]));
+};
+var $author$project$Api$encodeNewUserRequest = function (rec) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'user',
+				$author$project$Api$encodeNewUser(rec.user))
+			]));
+};
 var $author$project$Api$createUser = function (config) {
 	return $elm$http$Http$request(
 		{
@@ -15633,7 +15715,6 @@ var $author$project$Api$createUser = function (config) {
 		});
 };
 var $elm$core$Debug$toString = _Debug_toString;
-var $elm$core$Debug$todo = _Debug_todo;
 var $author$project$Register$update = F3(
 	function (context, msg, model) {
 		switch (msg.$) {
@@ -15669,21 +15750,24 @@ var $author$project$Register$update = F3(
 			default:
 				if (msg.a.$ === 'Err') {
 					var err = msg.a.a;
-					return _Debug_todo(
-						'Register',
-						{
-							start: {line: 102, column: 13},
-							end: {line: 102, column: 23}
-						})(
-						$elm$core$Debug$toString(err));
+					return $author$project$Tea$save(
+						_Utils_update(
+							model,
+							{
+								errors: _List_fromArray(
+									[
+										$elm$core$Debug$toString(err)
+									])
+							}));
 				} else {
 					var user = msg.a.a.user;
-					return _Debug_todo(
-						'Register',
-						{
-							start: {line: 105, column: 13},
-							end: {line: 105, column: 23}
-						})('');
+					return A2(
+						$author$project$Tea$navigate,
+						'/',
+						A2(
+							$author$project$Tea$setFlags,
+							$elm$core$Maybe$Just(user),
+							$author$project$Tea$save(model)));
 				}
 		}
 	});
@@ -15764,6 +15848,24 @@ var $author$project$Register$view = F2(
 															$elm$html$Html$text('Have an account?')
 														]))
 												])),
+											A2(
+											$elm$html$Html$ul,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('error-messages')
+												]),
+											A2(
+												$elm$core$List$map,
+												function (error) {
+													return A2(
+														$elm$html$Html$li,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text(error)
+															]));
+												},
+												model.errors)),
 											A2(
 											$elm$html$Html$form,
 											_List_fromArray(
@@ -15882,6 +15984,7 @@ var $author$project$Tea$withChildEffects = F4(
 							$elm$core$Platform$Cmd$map(mapMsgFn),
 							effs.cmds)),
 					effects: update.effects,
+					internalEffects: update.internalEffects,
 					model: update.model
 				}),
 			effs.effects);
@@ -15942,12 +16045,54 @@ var $author$project$Base$subscriptions = F2(
 					A2(
 					$elm$core$Platform$Sub$map,
 					$author$project$Base$LoginMsg,
-					A2($author$project$Login$branch.subscriptions, context, model.login))
+					A2($author$project$Login$branch.subscriptions, context, model.login)),
+					A2(
+					$elm$core$Platform$Sub$map,
+					$author$project$Base$RegisterMsg,
+					A2($author$project$Register$branch.subscriptions, context, model.register))
 				]));
 	});
 var $author$project$Base$Navigate = function (a) {
 	return {$: 'Navigate', a: a};
 };
+var $author$project$Tea$applyEffects = F2(
+	function (fn, _v0) {
+		var update = _v0.a;
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (eff, _v1) {
+					var up = _v1.a;
+					var _v2 = A2(
+						fn,
+						eff,
+						$author$project$Tea$Tea(up));
+					var next = _v2.a;
+					return $author$project$Tea$Tea(
+						_Utils_update(
+							next,
+							{
+								internalEffects: _Utils_ap(next.internalEffects, up.internalEffects)
+							}));
+				}),
+			$author$project$Tea$Tea(
+				{cmds: update.cmds, effects: _List_Nil, internalEffects: update.internalEffects, model: update.model}),
+			update.effects);
+	});
+var $author$project$Tea$mapMsg = F2(
+	function (fn, _v0) {
+		var update = _v0.a;
+		return $author$project$Tea$Tea(
+			{
+				cmds: A2(
+					$elm$core$List$map,
+					$elm$core$Platform$Cmd$map(fn),
+					update.cmds),
+				effects: update.effects,
+				internalEffects: update.internalEffects,
+				model: update.model
+			});
+	});
 var $author$project$Base$update = F3(
 	function (context, msg, model) {
 		switch (msg.$) {
@@ -16023,6 +16168,19 @@ var $author$project$Base$update = F3(
 							$author$project$Base$RegisterMsg,
 							A3($author$project$Register$branch.update, context, registerMsg, model.register))));
 		}
+	});
+var $author$project$Tea$andThen = F2(
+	function (fn, _v0) {
+		var update1 = _v0.a;
+		var _v1 = fn(update1.model);
+		var update2 = _v1.a;
+		return $author$project$Tea$Tea(
+			{
+				cmds: _Utils_ap(update2.cmds, update1.cmds),
+				effects: update2.effects,
+				internalEffects: _Utils_ap(update2.internalEffects, update1.internalEffects),
+				model: update2.model
+			});
 	});
 var $author$project$Base$urlChanged = F2(
 	function (context, model) {
@@ -16170,17 +16328,82 @@ var $author$project$Base$view = F2(
 				]));
 	});
 var $author$project$Base$branch = {init: $author$project$Base$init, subscriptions: $author$project$Base$subscriptions, update: $author$project$Base$update, urlChanged: $author$project$Base$urlChanged, view: $author$project$Base$view};
-var $elm$core$Result$toMaybe = function (result) {
-	if (result.$ === 'Ok') {
-		var v = result.a;
-		return $elm$core$Maybe$Just(v);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $author$project$Tea$Context = function (a) {
 	return {$: 'Context', a: a};
 };
+var $author$project$Tea$Model = function (a) {
+	return {$: 'Model', a: a};
+};
+var $author$project$Tea$RootMsg = function (a) {
+	return {$: 'RootMsg', a: a};
+};
+var $author$project$Tea$UrlChanged = function (a) {
+	return {$: 'UrlChanged', a: a};
+};
+var $author$project$Tea$UrlRequested = function (a) {
+	return {$: 'UrlRequested', a: a};
+};
+var $elm$core$Tuple$mapFirst = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			func(x),
+			y);
+	});
+var $elm$core$Tuple$mapSecond = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			x,
+			func(y));
+	});
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $author$project$Tea$applyInternalEffects = F2(
+	function (effects, _v0) {
+		var initialModel = _v0.a.a;
+		var initialCmd = _v0.b;
+		return A2(
+			$elm$core$Tuple$mapSecond,
+			A2(
+				$elm$core$Basics$composeR,
+				$elm$core$List$cons(initialCmd),
+				$elm$core$Platform$Cmd$batch),
+			A2(
+				$elm$core$Tuple$mapFirst,
+				$author$project$Tea$Model,
+				A3(
+					$elm$core$List$foldl,
+					F2(
+						function (eff, _v1) {
+							var model = _v1.a;
+							var cmd = _v1.b;
+							if (eff.$ === 'SetFlags') {
+								var flags_ = eff.a;
+								var context = model.context;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											context: _Utils_update(
+												context,
+												{flags: flags_})
+										}),
+									cmd);
+							} else {
+								var path = eff.a;
+								return _Utils_Tuple2(
+									model,
+									A2(
+										$elm$core$List$cons,
+										A2($elm$browser$Browser$Navigation$pushUrl, model.navKey, path),
+										cmd));
+							}
+						}),
+					_Utils_Tuple2(initialModel, _List_Nil),
+					effects)));
+	});
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -16264,56 +16487,11 @@ var $lydell$elm_app_url$AppUrl$fromUrl = function (url) {
 			A2($elm$core$Maybe$map, $lydell$elm_app_url$AppUrl$parseQueryParameters, url.query))
 	};
 };
-var $author$project$Tea$tree = F2(
-	function (decodeFlags, branch_) {
-		return {
-			init: F2(
-				function (flags_, url) {
-					var contextUrl = $lydell$elm_app_url$AppUrl$fromUrl(url);
-					var context = $author$project$Tea$Context(
-						{
-							flags: decodeFlags(flags_),
-							relativePath: contextUrl.path,
-							url: contextUrl
-						});
-					return _Utils_Tuple2(
-						branch_.init(context),
-						context);
-				}),
-			subscriptions: branch_.subscriptions,
-			update: branch_.update,
-			urlChanged: branch_.urlChanged,
-			view: branch_.view
-		};
-	});
-var $author$project$Main$tree = A2(
-	$author$project$Tea$tree,
-	A2(
-		$elm$core$Basics$composeR,
-		$elm$json$Json$Decode$decodeValue($author$project$Api$decodeUser),
-		$elm$core$Result$toMaybe),
-	$author$project$Base$branch);
-var $author$project$Main$init = F3(
-	function (flags, url, navKey) {
-		var _v0 = A2($author$project$Main$tree.init, flags, url);
-		var initialSprig = _v0.a;
-		var initialContext = _v0.b;
-		return $author$project$Tea$complete(
-			A2(
-				$author$project$Tea$applyEffects,
-				$author$project$Main$applyCarlEffects,
-				A2(
-					$author$project$Tea$mapModel,
-					function (root) {
-						return {context: initialContext, navKey: navKey, root: root};
-					},
-					A2($author$project$Tea$mapMsg, $author$project$Main$TreeMsg, initialSprig))));
-	});
-var $author$project$Main$subscriptions = function (model) {
-	return A2(
-		$elm$core$Platform$Sub$map,
-		$author$project$Main$TreeMsg,
-		A2($author$project$Main$tree.subscriptions, model.context, model.root));
+var $author$project$Tea$harvest = function (_v0) {
+	var update = _v0.a;
+	return _Utils_Tuple2(
+		update.model,
+		$elm$core$Platform$Cmd$batch(update.cmds));
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$url$Url$addPort = F2(
@@ -16369,74 +16547,187 @@ var $author$project$Tea$urlChanged = F2(
 				context,
 				{relativePath: contextUrl.path, url: contextUrl}));
 	});
-var $author$project$Main$update = F2(
-	function (msg, model) {
-		switch (msg.$) {
-			case 'UrlRequested':
-				var urlRequest = msg.a;
-				if (urlRequest.$ === 'Internal') {
-					var url = urlRequest.a;
-					return _Utils_Tuple2(
-						model,
-						A2(
-							$elm$browser$Browser$Navigation$pushUrl,
-							model.navKey,
-							$elm$url$Url$toString(url)));
-				} else {
-					var url = urlRequest.a;
-					return _Utils_Tuple2(
-						model,
-						$elm$browser$Browser$Navigation$load(url));
-				}
-			case 'UrlChanged':
-				var url = msg.a;
-				var newContext = A2($author$project$Tea$urlChanged, url, model.context);
-				return $author$project$Tea$complete(
-					A2(
-						$author$project$Tea$applyEffects,
-						$author$project$Main$applyCarlEffects,
-						A2(
-							$author$project$Tea$mapModel,
-							function (root) {
-								return _Utils_update(
-									model,
-									{context: newContext, root: root});
-							},
-							A2(
-								$author$project$Tea$mapMsg,
-								$author$project$Main$TreeMsg,
-								A2($author$project$Main$tree.urlChanged, newContext, model.root)))));
-			default:
-				var baseMsg = msg.a;
-				return $author$project$Tea$complete(
-					A2(
-						$author$project$Tea$applyEffects,
-						$author$project$Main$applyCarlEffects,
-						A2(
-							$author$project$Tea$mapModel,
-							function (root) {
-								return _Utils_update(
-									model,
-									{root: root});
-							},
-							A2(
-								$author$project$Tea$mapMsg,
-								$author$project$Main$TreeMsg,
-								A3($author$project$Main$tree.update, model.context, baseMsg, model.root)))));
-		}
-	});
-var $author$project$Main$view = function (model) {
+var $author$project$Tea$plant = function (options) {
 	return {
-		body: _List_fromArray(
-			[
+		init: F3(
+			function (encodedFlags, url, navKey) {
+				var flags_ = options.decodeFlags(encodedFlags);
+				var contextUrl = $lydell$elm_app_url$AppUrl$fromUrl(url);
+				var initialContext = {flags: flags_, relativePath: contextUrl.path, url: contextUrl};
+				var _v0 = $author$project$Tea$harvest(
+					A2(
+						$author$project$Tea$mapMsg,
+						$author$project$Tea$RootMsg,
+						options.root.init(
+							$author$project$Tea$Context(initialContext))));
+				var model = _v0.a;
+				var cmd = _v0.b;
+				return _Utils_Tuple2(
+					$author$project$Tea$Model(
+						{context: initialContext, navKey: navKey, rootModel: model}),
+					cmd);
+			}),
+		onUrlChange: $author$project$Tea$UrlChanged,
+		onUrlRequest: $author$project$Tea$UrlRequested,
+		subscriptions: function (_v1) {
+			var model = _v1.a;
+			return A2(
+				$elm$core$Platform$Sub$map,
+				$author$project$Tea$RootMsg,
 				A2(
-				$elm$html$Html$map,
-				$author$project$Main$TreeMsg,
-				A2($author$project$Main$tree.view, model.context, model.root))
-			]),
-		title: 'Hello, World!'
+					options.root.subscriptions,
+					$author$project$Tea$Context(model.context),
+					model.rootModel));
+		},
+		update: F2(
+			function (msg, _v2) {
+				var model = _v2.a;
+				switch (msg.$) {
+					case 'UrlRequested':
+						var urlRequest = msg.a;
+						if (urlRequest.$ === 'Internal') {
+							var url = urlRequest.a;
+							return _Utils_Tuple2(
+								$author$project$Tea$Model(model),
+								A2(
+									$elm$browser$Browser$Navigation$pushUrl,
+									model.navKey,
+									$elm$url$Url$toString(url)));
+						} else {
+							var url = urlRequest.a;
+							return _Utils_Tuple2(
+								$author$project$Tea$Model(model),
+								$elm$browser$Browser$Navigation$load(url));
+						}
+					case 'UrlChanged':
+						var url = msg.a;
+						var _v5 = A2(
+							$author$project$Tea$urlChanged,
+							url,
+							$author$project$Tea$Context(model.context));
+						var newContext = _v5.a;
+						var _v6 = A2(
+							$author$project$Tea$mapMsg,
+							$author$project$Tea$RootMsg,
+							A2(
+								options.root.urlChanged,
+								$author$project$Tea$Context(newContext),
+								model.rootModel));
+						var brch = _v6.a;
+						return A2(
+							$author$project$Tea$applyInternalEffects,
+							brch.internalEffects,
+							A2(
+								$elm$core$Tuple$mapSecond,
+								$elm$core$Platform$Cmd$batch,
+								A2(
+									$elm$core$Tuple$mapFirst,
+									function (root) {
+										return $author$project$Tea$Model(
+											_Utils_update(
+												model,
+												{context: newContext, rootModel: root}));
+									},
+									A3(
+										$elm$core$List$foldl,
+										F2(
+											function (eff, _v7) {
+												var m = _v7.a;
+												var c = _v7.b;
+												return A2(
+													$elm$core$Tuple$mapSecond,
+													function (c__) {
+														return A2(
+															$elm$core$List$cons,
+															A2($elm$core$Platform$Cmd$map, $author$project$Tea$RootMsg, c__),
+															c);
+													},
+													A2(options.rootEffect, eff, m));
+											}),
+										_Utils_Tuple2(brch.model, brch.cmds),
+										brch.effects))));
+					default:
+						var msg_ = msg.a;
+						var _v8 = A2(
+							$author$project$Tea$mapMsg,
+							$author$project$Tea$RootMsg,
+							A3(
+								options.root.update,
+								$author$project$Tea$Context(model.context),
+								A2($elm$core$Debug$log, 'root msg', msg_),
+								model.rootModel));
+						var brch = _v8.a;
+						return A2(
+							$author$project$Tea$applyInternalEffects,
+							brch.internalEffects,
+							A2(
+								$elm$core$Tuple$mapSecond,
+								$elm$core$Platform$Cmd$batch,
+								A2(
+									$elm$core$Tuple$mapFirst,
+									function (root) {
+										return $author$project$Tea$Model(
+											_Utils_update(
+												model,
+												{rootModel: root}));
+									},
+									A3(
+										$elm$core$List$foldl,
+										F2(
+											function (eff, _v9) {
+												var m = _v9.a;
+												var c = _v9.b;
+												return A2(
+													$elm$core$Tuple$mapSecond,
+													function (c__) {
+														return A2(
+															$elm$core$List$cons,
+															A2($elm$core$Platform$Cmd$map, $author$project$Tea$RootMsg, c__),
+															c);
+													},
+													A2(options.rootEffect, eff, m));
+											}),
+										_Utils_Tuple2(brch.model, brch.cmds),
+										brch.effects))));
+				}
+			}),
+		view: function (_v10) {
+			var model = _v10.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$map,
+						$author$project$Tea$RootMsg,
+						A2(
+							options.root.view,
+							$author$project$Tea$Context(model.context),
+							model.rootModel))
+					]),
+				title: 'TODO'
+			};
+		}
 	};
 };
+var $elm$core$Result$toMaybe = function (result) {
+	if (result.$ === 'Ok') {
+		var v = result.a;
+		return $elm$core$Maybe$Just(v);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
 var $author$project$Main$main = $elm$browser$Browser$application(
-	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$UrlRequested, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.User":{"args":[],"type":"{ bio : String.String, email : String.String, image : String.String, token : String.String, username : String.String }"},"Api.UserResponse":{"args":[],"type":"{ user : Api.User }"}},"unions":{"Main.Msg":{"args":[],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"TreeMsg":["Base.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Base.Msg":{"args":[],"tags":{"Login":[],"HeaderMsg":["Header.Msg"],"HomeMsg":["Home.Msg"],"LoginMsg":["Login.Msg"],"RegisterMsg":["Register.Msg"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Header.Msg":{"args":[],"tags":{"Login":[]}},"Home.Msg":{"args":[],"tags":{"TagSelected":["String.String"]}},"Login.Msg":{"args":[],"tags":{"EmailChanged":["String.String"],"Login":[],"PasswordChanged":["String.String"]}},"Register.Msg":{"args":[],"tags":{"UsernameChanged":["String.String"],"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Register":[],"Registered":["Result.Result Http.Error Api.UserResponse"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+	$author$project$Tea$plant(
+		{
+			decodeFlags: A2(
+				$elm$core$Basics$composeR,
+				$elm$json$Json$Decode$decodeValue($author$project$Api$decodeUser),
+				$elm$core$Result$toMaybe),
+			root: $author$project$Base$branch,
+			rootEffect: F2(
+				function (eff, model) {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				})
+		}));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)({"versions":{"elm":"0.19.1"},"types":{"message":"Tea.Msg Base.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.User":{"args":[],"type":"{ bio : Maybe.Maybe String.String, email : String.String, image : String.String, token : String.String, username : String.String }"},"Api.UserResponse":{"args":[],"type":"{ user : Api.User }"}},"unions":{"Base.Msg":{"args":[],"tags":{"Login":[],"HeaderMsg":["Header.Msg"],"HomeMsg":["Home.Msg"],"LoginMsg":["Login.Msg"],"RegisterMsg":["Register.Msg"]}},"Tea.Msg":{"args":["msg"],"tags":{"UrlRequested":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"RootMsg":["msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Header.Msg":{"args":[],"tags":{"Login":[]}},"Home.Msg":{"args":[],"tags":{"TagSelected":["String.String"]}},"Login.Msg":{"args":[],"tags":{"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Login":[],"LoginResponded":["Result.Result Http.Error Api.UserResponse"]}},"Register.Msg":{"args":[],"tags":{"UsernameChanged":["String.String"],"EmailChanged":["String.String"],"PasswordChanged":["String.String"],"Register":[],"Registered":["Result.Result Http.Error Api.UserResponse"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
