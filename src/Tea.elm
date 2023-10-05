@@ -60,38 +60,6 @@ type Effect flags
     | Navigate String
 
 
-type alias Tree encodedFlags flags model msg effect =
-    { init : encodedFlags -> Url -> ( Tea flags model msg effect, Context flags )
-    , subscriptions : Context flags -> model -> Sub msg
-    , update : Context flags -> msg -> model -> Tea flags model msg effect
-    , urlChanged : Context flags -> model -> Tea flags model msg effect
-    , view : Context flags -> model -> Html msg
-    }
-
-
-tree : (encodedFlags -> flags) -> Branch flags model msg effect -> Tree encodedFlags flags model msg effect
-tree decodeFlags branch_ =
-    { init =
-        \flags_ url ->
-            let
-                contextUrl =
-                    AppUrl.fromUrl url
-
-                context =
-                    Context
-                        { flags = decodeFlags flags_
-                        , url = contextUrl
-                        , relativePath = contextUrl.path
-                        }
-            in
-            ( branch_.init context, context )
-    , subscriptions = branch_.subscriptions
-    , urlChanged = branch_.urlChanged
-    , update = branch_.update
-    , view = branch_.view
-    }
-
-
 plant :
     { decodeFlags : encodedFlags -> flags
     , root : Branch flags model msg effect
@@ -109,12 +77,15 @@ plant options =
     { init =
         \encodedFlags url navKey ->
             let
+                flags_ : flags
                 flags_ =
                     options.decodeFlags encodedFlags
 
+                contextUrl : AppUrl
                 contextUrl =
                     AppUrl.fromUrl url
 
+                initialContext : InternalContext flags
                 initialContext =
                     { flags = flags_
                     , url = contextUrl
@@ -205,6 +176,7 @@ applyInternalEffects effects ( Model initialModel, initialCmd ) =
             case eff of
                 SetFlags flags_ ->
                     let
+                        context : InternalContext flags
                         context =
                             model.context
                     in
@@ -328,6 +300,7 @@ flags (Context context) =
 urlChanged : Url -> Context flags -> Context flags
 urlChanged url (Context context) =
     let
+        contextUrl : AppUrln
         contextUrl =
             AppUrl.fromUrl url
     in
@@ -354,12 +327,14 @@ consumePath pathToTake (Context context) =
         { context
             | relativePath =
                 let
+                    piecesMatch : Bool
                     piecesMatch =
                         List.map2 Tuple.pair
                             pathToTake
                             context.relativePath
                             |> List.all (\( a, b ) -> a == b)
 
+                    toTakeLength : Int
                     toTakeLength =
                         List.length pathToTake
                 in

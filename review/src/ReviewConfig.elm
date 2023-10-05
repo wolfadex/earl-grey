@@ -44,9 +44,7 @@ config =
     , NoExposingEverything.rule
     , NoImportingEverything.rule []
     , NoMissingTypeAnnotation.rule
-        |> Rule.ignoreErrorsForFiles [ "src/Tea.elm" ]
     , NoMissingTypeAnnotationInLetIn.rule
-        |> Rule.ignoreErrorsForFiles [ "src/Tea.elm" ]
     , NoMissingTypeExpose.rule
     , NoSimpleLetBody.rule
     , NoPrematureLetComputation.rule
@@ -54,12 +52,9 @@ config =
     , NoUnused.CustomTypeConstructorArgs.rule
     , NoUnused.Dependencies.rule
     , NoUnused.Exports.rule
-        |> Rule.ignoreErrorsForFiles [ "src/Tea.elm" ]
     , NoUnused.Parameters.rule
-        |> Rule.ignoreErrorsForFiles [ "src/Tea.elm" ]
     , NoUnused.Patterns.rule
     , NoUnused.Variables.rule
-        |> Rule.ignoreErrorsForFiles [ "src/Tea.elm" ]
     , Simplify.rule Simplify.defaults
     ]
         |> List.map (Rule.ignoreErrorsForDirectories [ "generated" ])
