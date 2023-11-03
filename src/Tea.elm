@@ -10,6 +10,7 @@ module Tea exposing
     , mapModel, mapMsg, andThen, applyEffects, urlChanged
     , extractModel, withChildEffects
     , setFlags, navigate
+    , Effects
     )
 
 {-|
@@ -60,6 +61,8 @@ type Effect flags
     | Navigate String
 
 
+{-| Converting your Tea app into a `Browser.application`. Also a play on words, like Tea, cause this is experimental
+-}
 plant :
     { decodeFlags : encodedFlags -> flags
     , root : Branch flags model msg effect
@@ -191,12 +194,16 @@ applyInternalEffects effects ( Model initialModel, initialCmd ) =
         |> Tuple.mapSecond ((::) initialCmd >> Cmd.batch)
 
 
+{-| The root msg of your Tea app
+-}
 type Msg msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url
     | RootMsg msg
 
 
+{-| The overall model of your Tea app
+-}
 type Model model flags
     = Model
         { rootModel : model
@@ -205,6 +212,8 @@ type Model model flags
         }
 
 
+{-| A little more than a `Browser.element` but less than a `Browser.application`
+-}
 type alias Branch flags model msg effect =
     { init : Context flags -> Tea flags model msg effect
     , subscriptions : Context flags -> model -> Sub msg
@@ -214,14 +223,20 @@ type alias Branch flags model msg effect =
     }
 
 
+{-| A little more than a `Browser.element` but less than a `Browser.application`, and can handle URLs
+-}
 type alias Route flags model msg effect =
     Branch flags (Maybe model) msg effect
 
 
+{-| Helpful alias for working with routes
+-}
 type alias RouteModel model =
     Maybe model
 
 
+{-| Create a branch of your Tea app that can handle URLs
+-}
 branch :
     { path : List String }
     -> Branch flags model msg effect
@@ -281,6 +296,8 @@ branch cfg branch_ =
     }
 
 
+{-| For storing things like the logged in User, current theme, etc.
+-}
 type Context flags
     = Context (InternalContext flags)
 
@@ -292,6 +309,8 @@ type alias InternalContext flags =
     }
 
 
+{-| Get the flags out of the context
+-}
 flags : Context flags -> flags
 flags (Context context) =
     context.flags
@@ -311,11 +330,16 @@ urlChanged url (Context context) =
         }
 
 
+{-| Get the full URL path
+-}
 absolutePath : Context flags -> List String
 absolutePath (Context context) =
     context.url.path
 
 
+{-| Get the portion of the URL path that is available to this branch,
+i.e. hasn't been consumed by parent components
+-}
 relativePath : Context flags -> List String
 relativePath (Context context) =
     context.relativePath
@@ -346,6 +370,9 @@ consumePath pathToTake (Context context) =
         }
 
 
+{-| Instead of dealing with `( model, Cmd msg )` we get a more robust type
+that allows us to deal with other styles of effects.
+-}
 type Tea flags model msg effect
     = Tea
         { model : model
@@ -355,6 +382,8 @@ type Tea flags model msg effect
         }
 
 
+{-| Save the state of your model
+-}
 save : model -> Tea flags model msg effect
 save model =
     Tea
@@ -365,21 +394,29 @@ save model =
         }
 
 
+{-| Add a Cmd to your Tea
+-}
 withCmd : Cmd msg -> Tea flags model msg effect -> Tea flags model msg effect
 withCmd cmd (Tea update) =
     Tea { update | cmds = cmd :: update.cmds }
 
 
+{-| Add a Msg to your Tea, to be handled in a future update
+-}
 withMsg : msg -> Tea flags model msg effect -> Tea flags model msg effect
 withMsg msg (Tea update) =
     Tea { update | cmds = msgToCmd msg :: update.cmds }
 
 
+{-| Add an effect to your Tea, to be handled by the parent component
+-}
 withEffect : effect -> Tea flags model msg effect -> Tea flags model msg effect
 withEffect effect (Tea update) =
     Tea { update | effects = effect :: update.effects }
 
 
+{-| The pairing helper for `extractModel`
+-}
 withChildEffects :
     (childMsg -> parentMsg)
     -> (childEffect -> Tea flags model parentMsg parentEffect -> Tea flags model parentMsg parentEffect)
@@ -405,6 +442,8 @@ msgToCmd msg =
         |> Task.perform identity
 
 
+{-| Map over the model of your Tea
+-}
 mapModel : (model1 -> model2) -> Tea flags model1 msg effect -> Tea flags model2 msg effect
 mapModel fn (Tea update) =
     Tea
@@ -415,6 +454,8 @@ mapModel fn (Tea update) =
         }
 
 
+{-| Map over the msg of your Tea
+-}
 mapMsg : (msg1 -> msg2) -> Tea flags model msg1 effect -> Tea flags model msg2 effect
 mapMsg fn (Tea update) =
     Tea
@@ -425,6 +466,8 @@ mapMsg fn (Tea update) =
         }
 
 
+{-| Go from one Tea to another, with access to the model of the first
+-}
 andThen : (model1 -> Tea flags model2 msg effects) -> Tea flags model1 msg effects -> Tea flags model2 msg effects
 andThen fn (Tea update1) =
     let
@@ -439,6 +482,9 @@ andThen fn (Tea update1) =
         }
 
 
+{-| Convert the effects of a child into something concrete,
+or maybe wrap them in your own effect to pass further upwards
+-}
 applyEffects :
     (childEffect -> Tea flags model msg parentEffect -> Tea flags model msg parentEffect)
     -> Tea flags model msg childEffect
@@ -462,16 +508,22 @@ applyEffects fn (Tea update) =
         update.effects
 
 
+{-| Used to update the flags in your Tea
+-}
 setFlags : flags -> Tea flags model msg effect -> Tea flags model msg effect
 setFlags flags_ (Tea update) =
     Tea { update | internalEffects = SetFlags flags_ :: update.internalEffects }
 
 
+{-| For manual, non-link based navigation
+-}
 navigate : String -> Tea flags model msg effect -> Tea flags model msg effect
 navigate path (Tea update) =
     Tea { update | internalEffects = Navigate path :: update.internalEffects }
 
 
+{-| Useful for when you have multiple child components
+-}
 extractModel : Tea flags model msg effect -> ( model, Effects msg effect )
 extractModel (Tea update) =
     ( update.model
@@ -482,6 +534,8 @@ extractModel (Tea update) =
     )
 
 
+{-| Just a wrapper for effectful things
+-}
 type Effects msg effect
     = Effects
         { cmds : List (Cmd msg)
