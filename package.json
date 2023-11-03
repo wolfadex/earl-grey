@@ -1,7 +1,7 @@
 {
-  "name": "elm-tea",
-  "version": "1.0.0",
-  "description": "",
+  "name": "earl-grey",
+  "version": "0.1.0",
+  "description": "An experimental Elm package to make building apps easier",
   "main": "index.js",
   "scripts": {
     "dev": "elm-watch hot",
@@ -10,7 +10,7 @@
   "author": "Wolfgang Schuster",
   "license": "MIT",
   "devDependencies": {
-    "elm": "^0.19.1-5",
+    "elm": "^0.19.1-6",
     "elm-format": "^0.8.7",
     "elm-review": "^2.10.3",
     "elm-watch": "^1.2.0-beta.3"

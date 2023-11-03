@@ -18,7 +18,7 @@ module Tea exposing
 # Create
 
 @docs Tea, Branch, Route
-@docs plant, branch, route
+@docs plant, branch
 
 
 ## Context
@@ -43,7 +43,7 @@ module Tea exposing
 
 # Effects
 
-@docs Effects, setFlags, navigate
+@docs setFlags, navigate
 
 -}
 
