@@ -1,5 +1,5 @@
 module Tea exposing
-    ( Tea, Branch, Route
+    ( Tea, Branch, Route, Effects
     , plant, branch
     , Context, Model, Msg, RouteModel
     , absolutePath, relativePath
@@ -7,10 +7,9 @@ module Tea exposing
     , save
     , withCmd, withMsg
     , withEffect
-    , mapModel, mapMsg, andThen, applyEffects, urlChanged
+    , mapModel, mapMsg, andThen, applyEffects
     , extractModel, withChildEffects
     , setFlags, navigate
-    , Effects
     )
 
 {-|
@@ -18,7 +17,7 @@ module Tea exposing
 
 # Create
 
-@docs Tea, Branch, Route
+@docs Tea, Branch, Route, Effects
 @docs plant, branch
 
 
@@ -38,7 +37,7 @@ module Tea exposing
 
 ## Update Child
 
-@docs mapModel, mapMsg, andThen, applyEffects, urlChanged
+@docs mapModel, mapMsg, andThen, applyEffects
 @docs extractModel, withChildEffects
 
 
