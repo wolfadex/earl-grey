@@ -1,6 +1,6 @@
 # Earl Grey
 
-An **experimental** Elm package to make building apps easier.
+An **experimental** Elm package to make building _apps_ easier.
 
 Inspired by projects like [Elm Land](https://elm.land/) and [React Router](https://reactrouter.com), my thought was "what if everything was TEA?". This has led me to the idea of a "component" setup in Elm where each component is a self-contained TEA app **with effects**.
 
