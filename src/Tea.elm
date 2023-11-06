@@ -3,6 +3,7 @@ module Tea exposing
     , plant, branch
     , Context, Model, Msg, RouteModel
     , absolutePath, relativePath
+    , consumePath
     , flags
     , save
     , withCmd, withMsg
@@ -25,6 +26,7 @@ module Tea exposing
 
 @docs Context, Model, Msg, RouteModel
 @docs absolutePath, relativePath
+@docs consumePath
 @docs flags
 
 
@@ -344,6 +346,9 @@ relativePath (Context context) =
     context.relativePath
 
 
+{-| Used when you want to consume a portion of the URL path before passing `Context` on to a child.
+This will likely go away in the future, but can be useful now for consuming dynamic paths.
+-}
 consumePath : List String -> Context flags -> Context flags
 consumePath pathToTake (Context context) =
     Context
