@@ -303,16 +303,17 @@ route branch_ =
                     save model
     , view =
         \ctx model ->
-            if relativePath ctx == cfg.path then
-                case model of
-                    Nothing ->
-                        Html.text ""
+            case branch_.pathHandler (relativePath ctx) of
+                Match match ->
+                    case model of
+                        Nothing ->
+                            Html.text ""
 
-                    Just m ->
-                        branch_.view ctx m
+                        Just m ->
+                            branch_.view ctx m
 
-            else
-                Html.text ""
+                Ignore ->
+                    Html.text ""
     }
 
 
