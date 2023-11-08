@@ -1,6 +1,6 @@
 module Tea exposing
     ( Tea, Branch, Route, Effects
-    , plant, branch
+    , toApplication, route
     , Context, Model, Msg, RouteModel
     , absolutePath, relativePath
     , consumePath
@@ -19,7 +19,7 @@ module Tea exposing
 # Create
 
 @docs Tea, Branch, Route, Effects
-@docs plant, branch
+@docs toApplication, route
 
 
 ## Context
@@ -62,9 +62,9 @@ type Effect flags
     | Navigate String
 
 
-{-| Converting your Tea app into a `Browser.application`. Also a play on words, like Tea, cause this is experimental
+{-| Converting your Tea app into a `Browser.application`.
 -}
-plant :
+toApplication :
     { decodeFlags : encodedFlags -> flags
     , root : Branch flags model msg effect
     , rootEffect : effect -> model -> ( model, Cmd msg )
@@ -77,7 +77,7 @@ plant :
         , onUrlRequest : Browser.UrlRequest -> Msg msg
         , onUrlChange : Url -> Msg msg
         }
-plant options =
+toApplication options =
     { init =
         \encodedFlags url navKey ->
             let
@@ -236,21 +236,39 @@ type alias RouteModel model =
     Maybe model
 
 
+{-| Whether you want to match on the current, relative path or not.
+If you match, you specify how much of the path to match on (this will be consumed and unavailable in the `Context`),
+as well as an additional args you may extract from the URL.
+-}
+type PathHandler args
+    = Match
+        { path : List String
+        , args : args
+        }
+    | Ignore
+
+
 {-| Create a branch of your Tea app that can handle URLs
 -}
-branch :
-    { path : List String }
-    -> Branch flags model msg effect
+route :
+    { pathHandler : List String -> PathHandler args
+    , init : args -> Context flags -> Tea flags model msg effect
+    , subscriptions : Context flags -> model -> Sub msg
+    , update : Context flags -> msg -> model -> Tea flags model msg effect
+    , urlChanged : args -> Context flags -> model -> Tea flags model msg effect
+    , view : Context flags -> model -> Html msg
+    }
     -> Route flags model msg effect
-branch cfg branch_ =
+route branch_ =
     { init =
         \ctx ->
-            if relativePath ctx == cfg.path then
-                branch_.init ctx
-                    |> mapModel Just
+            case branch_.pathHandler (relativePath ctx) of
+                Match match ->
+                    branch_.init match.args (consumePath match.path ctx)
+                        |> mapModel Just
 
-            else
-                save Nothing
+                Ignore ->
+                    save Nothing
     , subscriptions =
         \ctx model ->
             case model of
@@ -270,18 +288,19 @@ branch cfg branch_ =
                         |> mapModel Just
     , urlChanged =
         \ctx model ->
-            if relativePath ctx == cfg.path then
-                case model of
-                    Nothing ->
-                        branch_.init ctx
-                            |> mapModel Just
+            case branch_.pathHandler (relativePath ctx) of
+                Match match ->
+                    case model of
+                        Nothing ->
+                            branch_.init match.args (consumePath match.path ctx)
+                                |> mapModel Just
 
-                    Just m ->
-                        branch_.urlChanged ctx m
-                            |> mapModel Just
+                        Just m ->
+                            branch_.urlChanged match.args (consumePath match.path ctx) m
+                                |> mapModel Just
 
-            else
-                save model
+                Ignore ->
+                    save model
     , view =
         \ctx model ->
             if relativePath ctx == cfg.path then
