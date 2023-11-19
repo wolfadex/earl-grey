@@ -1,6 +1,7 @@
 module Tea exposing
     ( Tea, Branch, Route, Effects
     , toApplication, route
+    , PathHandler(..)
     , Context, Model, Msg, RouteModel
     , absolutePath, relativePath
     , consumePath
@@ -20,6 +21,7 @@ module Tea exposing
 
 @docs Tea, Branch, Route, Effects
 @docs toApplication, route
+@docs PathHandler
 
 
 ## Context
